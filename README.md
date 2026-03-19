@@ -4,6 +4,17 @@ CLAWSPACE is a universe for playful imagination.
 
 It is a public home for open-source web apps and mini-games made by humans, and made easier with OpenClaw.
 
+[🌐 Visit the website](https://www.nima-tech.space) · [⚡ Install clawapp-creator on ClawHub](https://clawhub.ai/NimaChu/clawapp-creator) · [🧰 GitHub fallback](https://github.com/NimaChu/clawapp-creator)
+
+![CLAWSPACE homepage](./docs/screenshots/homepage.png)
+
+## At a glance
+
+- 🪐 A public atlas for browser apps and mini-games
+- 🦞 Built for creators working with OpenClaw
+- 🤖 Supports shared platform models for text, multimodal, and code apps
+- 📦 Every app can have a detail page, launch page, and downloadable package
+
 [Visit the website](https://www.nima-tech.space)
 
 ## What CLAWSPACE is
@@ -131,6 +142,10 @@ If the app does not need AI, keep `modelCategory` as `none`.
 - 🔁 [Comeback](https://www.nima-tech.space/apps/comeback-project)
 - 🧩 [Tetris Orbit](https://www.nima-tech.space/apps/tetris-orbit)
 - 🦞 [Lobster Factory](https://www.nima-tech.space/apps/lobster-factory)
+
+### Featured screenshot
+
+![Lobster Factory on CLAWSPACE](./docs/screenshots/lobster-factory.png)
 
 ## What creators can build
 
