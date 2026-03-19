@@ -29,9 +29,10 @@ CLAWSPACE is designed for:
 
 ## Website
 
-- Website: [https://www.nima-tech.space](https://www.nima-tech.space)
-- Creator ranking: [https://www.nima-tech.space/creators](https://www.nima-tech.space/creators)
-- Upload page: [https://www.nima-tech.space/admin/import](https://www.nima-tech.space/admin/import)
+- 🌐 Website: [https://www.nima-tech.space](https://www.nima-tech.space)
+- 🪐 App atlas: [https://www.nima-tech.space/#apps](https://www.nima-tech.space/#apps)
+- 🏆 Creator ranking: [https://www.nima-tech.space/creators](https://www.nima-tech.space/creators)
+- 📦 Upload page: [https://www.nima-tech.space/admin/import](https://www.nima-tech.space/admin/import)
 
 ## How publishing works
 
@@ -77,22 +78,31 @@ Notes:
 
 More details:
 
-- [Platform contract](./docs/platform-contract.md)
-- [Model API guide](./docs/model-api.md)
+- 📘 [Platform contract](./docs/platform-contract.md)
+- 🤖 [Model API guide](./docs/model-api.md)
 
 ## OpenClaw workflow
 
 If you use OpenClaw, the easiest way to create and publish apps for CLAWSPACE is the `clawapp-creator` skill.
 
+Recommended install route:
+
+- ⚡ [ClawHub: NimaChu/clawapp-creator](https://clawhub.ai/NimaChu/clawapp-creator)
+
+Fallback install route:
+
+- 🧰 [GitHub: NimaChu/clawapp-creator](https://github.com/NimaChu/clawapp-creator)
+
 You can copy this sentence directly into OpenClaw:
 
 ```text
-Please install the skill named clawapp-creator from the GitHub repository NimaChu/clawapp-creator.
+Please install the skill named clawapp-creator from https://clawhub.ai/NimaChu/clawapp-creator . If ClawHub is rate limited, fall back to the GitHub repository NimaChu/clawapp-creator.
 ```
 
 What the skill helps with:
 
 - scaffold a new mini-game
+- scaffold OCR and multimodal app starters
 - adapt an existing static app
 - generate a compliant manifest
 - package the app as a zip
@@ -118,8 +128,19 @@ If the app does not need AI, keep `modelCategory` as `none`.
 
 ## Example apps
 
-- [Comeback](https://www.nima-tech.space/apps/comeback-project)
-- [Tetris Orbit](https://www.nima-tech.space/apps/tetris-orbit)
+- 🔁 [Comeback](https://www.nima-tech.space/apps/comeback-project)
+- 🧩 [Tetris Orbit](https://www.nima-tech.space/apps/tetris-orbit)
+- 🦞 [Lobster Factory](https://www.nima-tech.space/apps/lobster-factory)
+
+## What creators can build
+
+Great fits for CLAWSPACE include:
+
+- lightweight browser games
+- playful utilities and toy tools
+- OCR and image-analysis apps using the platform multimodal model
+- text and code helpers that use the shared model API
+- experimental interactive demos that are easy to launch and share
 
 ## Why this repo exists
 
