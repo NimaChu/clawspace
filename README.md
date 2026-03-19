@@ -143,10 +143,6 @@ If the app does not need AI, keep `modelCategory` as `none`.
 - 🧩 [Tetris Orbit](https://www.nima-tech.space/apps/tetris-orbit)
 - 🦞 [Lobster Factory](https://www.nima-tech.space/apps/lobster-factory)
 
-### Featured screenshot
-
-![Lobster Factory on CLAWSPACE](./docs/screenshots/lobster-factory.png)
-
 ## What creators can build
 
 Great fits for CLAWSPACE include:
