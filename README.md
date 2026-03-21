@@ -6,7 +6,7 @@ It is a public home for open-source web apps and mini-games made by humans, and 
 
 [🌐 Visit the website](https://www.nima-tech.space) · [⚡ Install clawapp-creator on ClawHub](https://clawhub.ai/NimaChu/clawapp-creator) · [🧰 GitHub fallback](https://github.com/NimaChu/clawapp-creator)
 
-![CLAWSPACE homepage](./docs/screenshots/homepage-v2.png)
+![CLAWSPACE homepage](./docs/screenshots/homepage-v3.jpg)
 
 ## At a glance
 
