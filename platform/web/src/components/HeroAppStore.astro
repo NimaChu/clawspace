@@ -1,0 +1,379 @@
+---
+import { getPublishedApps } from '../lib/app-registry.js';
+import { getCreatorPath, getCreators } from '../lib/creator-universe.js';
+import { getRecordedPlayerCount } from '../lib/game-scores.js';
+import { getTranslations } from '../lib/i18n.js';
+import { wasRuntimeStorageDegraded } from '../lib/runtime-storage.js';
+
+let apps = [];
+let tags = [];
+let creators = [];
+let players = 0;
+let runtimeDegraded = false;
+const t = getTranslations(Astro.request);
+const PLAYER_COUNT_BASELINE = 100;
+
+try {
+  apps = await getPublishedApps();
+  tags = Array.from(
+    new Set(
+      apps
+        .flatMap((app) => app.tags ?? [])
+        .filter((tag) => typeof tag === 'string' && tag.trim())
+    )
+  );
+  creators = await getCreators();
+  players = await getRecordedPlayerCount();
+} catch (error) {
+  console.error('HeroAppStore data load failed', error);
+}
+
+runtimeDegraded = wasRuntimeStorageDegraded();
+
+const orbitConfig = [
+  {
+    size: 13.5,
+    duration: 24,
+    delay: '-4s',
+    planet: 3.2,
+    tone: 'linear-gradient(135deg,#d5c3ad 0%,#9b8c7c 55%,#6f6258 100%)',
+    glow: '0 0 26px rgba(180,160,140,0.18)',
+    label: t.orbitMercury,
+  },
+  {
+    size: 19.5,
+    duration: 34,
+    delay: '-11s',
+    planet: 3.8,
+    tone: 'linear-gradient(135deg,#f3d49a 0%,#cf9f49 58%,#8c5f1f 100%)',
+    glow: '0 0 28px rgba(245,191,36,0.16)',
+    label: t.orbitVenus,
+  },
+  {
+    size: 25.5,
+    duration: 46,
+    delay: '-19s',
+    planet: 4.4,
+    tone: 'linear-gradient(135deg,#7dd3fc 0%,#2563eb 54%,#34d399 100%)',
+    glow: '0 0 30px rgba(56,189,248,0.18)',
+    label: t.orbitEarth,
+  },
+];
+const creatorPlanetStyleMap = {
+  aurora: {
+    sheen: 'radial-gradient(circle at 28% 24%,rgba(236,254,255,0.78),rgba(34,211,238,0.28) 28%,transparent 62%)',
+    aura: '0 0 0 2px rgba(94,234,212,0.28), 0 0 28px rgba(34,211,238,0.22)',
+  },
+  sunset: {
+    sheen: 'radial-gradient(circle at 28% 24%,rgba(255,247,237,0.76),rgba(251,146,60,0.3) 28%,transparent 62%)',
+    aura: '0 0 0 2px rgba(251,146,60,0.3), 0 0 28px rgba(244,63,94,0.18)',
+  },
+  nebula: {
+    sheen: 'radial-gradient(circle at 28% 24%,rgba(245,243,255,0.78),rgba(192,132,252,0.3) 28%,transparent 62%)',
+    aura: '0 0 0 2px rgba(192,132,252,0.28), 0 0 28px rgba(129,140,248,0.2)',
+  },
+  fallback: {
+    sheen: 'radial-gradient(circle at 30% 30%,rgba(255,255,255,0.62),rgba(255,255,255,0.1) 30%,transparent 62%)',
+    aura: '0 0 0 1px rgba(255,255,255,0.12), 0 0 22px rgba(148,163,184,0.14)',
+  },
+};
+const starCreator = creators[0] ?? null;
+const rankedCreators = creators.slice(1);
+const planetSlots = orbitConfig.map((orbit, index) => ({
+  orbit,
+  creator: rankedCreators[index] ?? null,
+}));
+---
+
+<section id="featured-app" class="relative overflow-hidden bg-[#050816] py-16 lg:py-24">
+  <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,#173567_0%,#09101f_40%,#050816_78%)]"></div>
+    <div class="pointer-events-none absolute left-1/2 top-0 hidden -translate-x-1/2 select-none text-center lg:block">
+      <div class="clawspace-title relative text-[6.2rem] font-black uppercase leading-none tracking-[0.12em] xl:text-[9rem]">
+        <span class="clawspace-red bg-gradient-to-r from-[#ff7a59] via-[#ff5a3d] to-[#ef4444] bg-clip-text text-transparent">
+          CLAW</span><span class="clawspace-blue text-white">SPACE</span>
+      </div>
+    </div>
+    <div class="absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.18)_0,transparent_18%),radial-gradient(circle_at_72%_18%,rgba(255,255,255,0.16)_0,transparent_14%),radial-gradient(circle_at_84%_56%,rgba(255,255,255,0.14)_0,transparent_12%),radial-gradient(circle_at_36%_72%,rgba(255,255,255,0.14)_0,transparent_10%),radial-gradient(circle_at_62%_88%,rgba(255,255,255,0.12)_0,transparent_9%)]"></div>
+    <div class="absolute left-[-12%] top-[-10%] h-[28rem] w-[28rem] rounded-full bg-cyan-400/10 blur-[120px]"></div>
+    <div class="absolute right-[-8%] top-[12%] h-[24rem] w-[24rem] rounded-full bg-fuchsia-500/10 blur-[110px]"></div>
+    <div class="absolute bottom-[-18%] left-[24%] h-[26rem] w-[26rem] rounded-full bg-orange-400/10 blur-[140px]"></div>
+    <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#050816] to-transparent"></div>
+    <div class="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+  </div>
+
+  <div class="container mx-auto px-4 relative z-10">
+    <div class="grid items-center gap-14 lg:grid-cols-[0.96fr_1.04fr] lg:gap-10">
+      <div class="max-w-2xl pt-10 lg:pt-14">
+        {runtimeDegraded && (
+          <div class="mb-5 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
+            网站部分数据服务暂时受限，当前进入维护兜底模式。页面可继续访问，但应用列表和作者数据可能暂时不完整。
+          </div>
+        )}
+        <div class="mb-4 inline-flex items-center gap-3 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm font-medium tracking-[0.14em] text-cyan-200">
+          <span class="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_18px_rgba(103,232,249,0.95)]"></span>
+          {t.heroBadge}
+        </div>
+
+        <h1 class="max-w-4xl text-4xl font-semibold leading-[0.95] text-white md:text-5xl lg:text-6xl">
+          {t.heroTitle}
+          <span class="block bg-gradient-to-r from-cyan-200 via-sky-300 to-fuchsia-300 bg-clip-text text-transparent">
+            {t.heroSubtitle}
+          </span>
+        </h1>
+
+        <p class="mt-4 max-w-2xl text-base leading-7 text-slate-300 md:text-lg">
+          {t.heroDescription}
+        </p>
+
+        <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+          <a
+            href="/#apps"
+            class="inline-flex min-w-[16.5rem] items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-600 px-8 py-3.5 text-base font-semibold text-slate-950 shadow-[0_18px_60px_rgba(56,189,248,0.3)] transition-transform duration-300 hover:-translate-y-0.5"
+          >
+            {t.heroBrowse}
+          </a>
+          {starCreator && (
+            <a
+              href="/creators"
+              class="inline-flex min-w-[16.5rem] items-center justify-center rounded-2xl border border-white/15 bg-white/5 px-8 py-3.5 text-base font-semibold text-white backdrop-blur transition-colors hover:bg-white/10"
+            >
+              {t.heroRanking}
+            </a>
+          )}
+        </div>
+
+        <div class="mt-6 rounded-3xl border border-white/10 bg-white/5 p-3.5 backdrop-blur">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold tracking-[0.12em] text-cyan-200">💡 {t.heroInstallTitle}</p>
+            <p class="mt-2 text-sm text-slate-300">{t.heroInstallBody}</p>
+            <p
+              class="mt-3 break-all rounded-2xl border border-white/8 bg-[#081120] px-4 py-2.5 font-mono text-sm text-slate-200"
+              data-skill-install-text
+            >
+              {t.heroInstallCopy}
+            </p>
+          </div>
+          <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <button
+              type="button"
+              class="inline-flex w-full items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-2.5 text-sm font-semibold text-cyan-100 transition-colors hover:bg-cyan-300/18 sm:w-auto"
+              data-copy-skill-install
+            >
+              {t.heroCopyButton}
+            </button>
+            <a
+              href="/downloads/clawapp-creator.zip"
+              class="inline-flex w-full items-center justify-center rounded-2xl border border-white/12 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto"
+            >
+              {t.heroDownloadButton}
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-4 grid gap-3 sm:grid-cols-3">
+          {[
+            { label: t.heroStatsApps, value: `${apps.length}` },
+            { label: t.heroStatsCreators, value: `${creators.length}` },
+            { label: t.heroStatsPlayers, value: `${PLAYER_COUNT_BASELINE + players}` },
+          ].map((stat) => (
+            <div class="rounded-3xl border border-white/10 bg-white/5 px-5 py-3.5 backdrop-blur">
+              <div class="text-xl font-semibold text-white">{stat.value}</div>
+              <div class="mt-1 text-sm tracking-[0.12em] text-slate-400">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="space-y-6 lg:pt-8">
+        <div class="relative mx-auto h-[35rem] w-full max-w-[40rem] overflow-hidden">
+          <div class="solar-system absolute inset-0">
+            {starCreator ? (
+              <a
+                href={getCreatorPath(starCreator.slug)}
+                class="solar-sun absolute left-1/2 top-1/2 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[radial-gradient(circle_at_30%_30%,#fde68a,#f59e0b_45%,#7c2d12)] text-center shadow-[0_0_72px_rgba(245,158,11,0.24)] transition-transform duration-300 hover:scale-105"
+                aria-label={`${t.heroCoreStar} ${starCreator.name}`}
+              >
+                <div class="relative z-10">
+                  <p class="text-[10px] tracking-[0.22em] text-slate-950/70">{t.heroCoreStar}</p>
+                  <p class="mt-2 text-lg font-semibold text-slate-950">{starCreator.name}</p>
+                </div>
+              </a>
+            ) : (
+              <div class="solar-sun absolute left-1/2 top-1/2 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[radial-gradient(circle_at_30%_30%,#fde68a,#f59e0b_45%,#7c2d12)] text-center shadow-[0_0_72px_rgba(245,158,11,0.24)]">
+                <div class="relative z-10">
+                  <p class="text-[10px] tracking-[0.22em] text-slate-950/70">{t.heroCoreStar}</p>
+                  <p class="mt-2 text-lg font-semibold text-slate-950">CLAWSPACE</p>
+                </div>
+              </div>
+            )}
+
+            {planetSlots.map(({ orbit, creator }) => {
+              const creatorPlanetStyle = creator
+                ? creatorPlanetStyleMap[creator.stylePreset] ?? creatorPlanetStyleMap.fallback
+                : creatorPlanetStyleMap.fallback;
+              return (
+                <div
+                  class="creator-orbit solar-orbit pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                  style={`width:${orbit.size}rem;height:${orbit.size}rem;animation-duration:${orbit.duration}s;animation-delay:${orbit.delay};box-shadow:0 0 0 1px ${creator?.orbitTone || 'rgba(148,163,184,0.18)'} inset, 0 0 18px ${creator?.orbitTone || 'rgba(148,163,184,0.1)'};`}
+                >
+                  <div
+                    class="creator-planet-anchor pointer-events-auto absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2"
+                    style={`width:${orbit.planet}rem;height:${orbit.planet}rem;animation-duration:${orbit.duration}s;animation-delay:${orbit.delay};`}
+                  >
+                    {creator ? (
+                      <a
+                        href={getCreatorPath(creator.slug)}
+                        class="group/planet flex h-full w-full flex-col items-center justify-center rounded-full text-center text-white transition-transform duration-300 hover:scale-105"
+                        aria-label={`${orbit.label} ${creator.name}`}
+                      >
+                        <div class="absolute inset-0 rounded-full" style={`background:${orbit.tone};box-shadow:${orbit.glow};`}></div>
+                        <div
+                          class="absolute -inset-[8%] rounded-full opacity-95"
+                          style={`box-shadow:${creatorPlanetStyle.aura};`}
+                        ></div>
+                        <div
+                          class="absolute inset-[14%] rounded-full"
+                          style={`background:${creatorPlanetStyle.sheen};`}
+                        ></div>
+                        <div
+                          class="absolute inset-[4%] rounded-full opacity-90"
+                          style={`box-shadow:0 0 0 1.5px ${creator.orbitTone || 'rgba(255,255,255,0.16)'} inset;`}
+                        ></div>
+                        <div class="creator-planet-content relative z-10 px-2">
+                          <p class="text-[9px] font-semibold leading-tight text-white/95 md:text-[10px]">{creator.name}</p>
+                        </div>
+                      </a>
+                    ) : (
+                      <div
+                        class="flex h-full w-full items-center justify-center rounded-full border border-dashed border-white/12 bg-white/[0.03] text-center"
+                        aria-label={`${orbit.label} ${t.heroVacant}`}
+                      >
+                        <div class="px-2">
+                          <p class="text-[9px] font-semibold uppercase tracking-[0.2em] text-white/55 md:text-[10px]">{t.heroVacant}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .clawspace-title {
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.06);
+  }
+
+  .clawspace-red {
+    text-shadow: 0 0 10px rgba(244, 63, 94, 0.12);
+  }
+
+  .clawspace-blue {
+    color: rgba(255, 255, 255, 0.98);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.12);
+  }
+
+  .solar-orbit {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .creator-orbit {
+    animation-name: orbit-spin;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    transform-origin: center;
+  }
+
+  .creator-planet-anchor {
+    animation-name: orbit-counter-spin;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    touch-action: manipulation;
+  }
+
+  .creator-orbit:hover,
+  .creator-orbit:focus-within {
+    animation-play-state: paused;
+  }
+
+  .creator-orbit:hover .creator-planet-anchor,
+  .creator-orbit:focus-within .creator-planet-anchor {
+    animation-play-state: paused;
+  }
+
+  @keyframes orbit-spin {
+    from {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  @keyframes orbit-counter-spin {
+    from {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+      transform: translate(-50%, -50%) rotate(-360deg);
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .solar-system {
+      transform: scale(0.9);
+      transform-origin: center;
+    }
+  }
+</style>
+
+<script define:vars={{ copiedText: t.heroCopied, copyButtonText: t.heroCopyButton, copyFailedText: t.heroCopyFailed }}>
+  const copySkillButton = document.querySelector('[data-copy-skill-install]');
+  const skillInstallText = document.querySelector('[data-skill-install-text]');
+
+  const fallbackCopyText = (text) => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.top = '-9999px';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    textarea.setSelectionRange(0, textarea.value.length);
+    const copied = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return copied;
+  };
+
+  copySkillButton?.addEventListener('click', async () => {
+    const text = skillInstallText?.textContent?.trim();
+    if (!text) return;
+
+    try {
+      if (navigator.clipboard?.writeText && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else if (!fallbackCopyText(text)) {
+        throw new Error('Fallback copy failed');
+      }
+      copySkillButton.textContent = copiedText;
+      window.setTimeout(() => {
+        copySkillButton.textContent = copyButtonText;
+      }, 1600);
+    } catch (error) {
+      console.error('Copy skill install text failed', error);
+      const fallbackWorked = fallbackCopyText(text);
+      copySkillButton.textContent = fallbackWorked ? copiedText : copyFailedText;
+      window.setTimeout(() => {
+        copySkillButton.textContent = copyButtonText;
+      }, 1600);
+    }
+  });
+</script>

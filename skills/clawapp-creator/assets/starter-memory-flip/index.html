@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>__APP_NAME__</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="panel intro">
+        <p class="eyebrow">Puzzle Starter</p>
+        <h1>__APP_NAME__</h1>
+        <p class="subtitle">__APP_DESCRIPTION__</p>
+        <div class="stats">
+          <div class="stat-card"><span>配对数</span><strong id="pairs">0</strong></div>
+          <div class="stat-card"><span>翻牌次数</span><strong id="moves">0</strong></div>
+          <div class="stat-card"><span>最佳成绩</span><strong id="best-moves">--</strong></div>
+        </div>
+        <div class="actions">
+          <button id="start-button">开始一局</button>
+          <button id="reset-button" class="ghost">重新洗牌</button>
+        </div>
+      </section>
+
+      <section class="panel board-wrap">
+        <div id="board" class="board" aria-label="记忆翻牌棋盘"></div>
+      </section>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+  </html>

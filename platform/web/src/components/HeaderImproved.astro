@@ -1,0 +1,287 @@
+---
+// src/components/HeaderImproved.astro
+import { getTranslationsForLocale } from '../lib/i18n.js';
+const user = Astro.props.currentUser ?? Astro.locals.currentUser;
+const locale = Astro.props.locale;
+const t = getTranslationsForLocale(locale);
+const localeToggleLabel = locale === 'zh' || locale === 'zh-CN' ? 'EN' : '中文';
+const navItems = user
+  ? [
+      { name: t.navHome, href: '/' },
+      { name: t.navAppAtlas, href: '/#apps' },
+      { name: t.navImport, href: '/admin/import' },
+      { name: t.navMyCreator, href: '/creators/me' },
+      ...((user.role || 'member') === 'admin' ? [{ name: t.navUsers, href: '/admin/users' }] : []),
+      ...((user.role || 'member') === 'admin' ? [{ name: t.navModel, href: '/admin/model' }] : []),
+    ]
+  : [
+      { name: t.navHome, href: '/' },
+      { name: t.navAppAtlas, href: '/#apps' },
+      { name: t.navLogin, href: '/login' },
+      { name: t.navRegister, href: '/register' }
+    ];
+
+---
+
+<header class="sticky top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm transition-colors duration-300">
+  <div class="container mx-auto px-4 py-4">
+    <nav class="flex justify-between items-center">
+      {/* Logo */}
+      <a href="/" class="flex items-center gap-3 group">
+        <div class="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white shadow-sm transition-all duration-300 group-hover:shadow-lg">
+          <img
+            src="/nimatech-mascot.jpg"
+            alt="Nima Tech mascot"
+            class="h-full w-full object-cover object-center"
+          />
+        </div>
+        <span class="font-bold text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          Nima Tech
+        </span>
+      </a>
+
+      {/* Desktop Nav */}
+      <div class="hidden md:flex items-center space-x-1">
+        {navItems.map(item => (
+          <a
+            key={item.name}
+            href={item.href}
+            target={item.href.startsWith('http') ? '_blank' : undefined}
+            rel={item.href.startsWith('http') ? 'noreferrer' : undefined}
+            class="nav-link px-4 py-2 rounded-lg transition-all duration-200 relative group"
+          >
+            <span class="relative z-10">{item.name}</span>
+            <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 group-hover:w-full"></div>
+          </a>
+        ))}
+
+        {/* 分隔线 */}
+        <div class="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-3"></div>
+
+        <button
+          id="language-toggle-button"
+          class="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+          aria-label={t.navLanguageToggle}
+          title={t.navLanguageToggle}
+        >
+          {localeToggleLabel}
+        </button>
+
+        {user && (
+          <div class="relative" id="user-menu-root">
+            <button
+              id="user-menu-button"
+              class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-gray-100 shadow-sm transition hover:ring-2 hover:ring-cyan-400/30 dark:bg-gray-800"
+              aria-label={user.displayName || t.userAvatarAlt}
+              aria-expanded="false"
+            >
+              {user.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt={`${user.displayName || t.userAvatarAlt}`}
+                  class="h-full w-full object-cover"
+                  referrerpolicy="no-referrer"
+                />
+              ) : (
+                <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                  {(user.displayName || user.email || '?').slice(0, 1).toUpperCase()}
+                </span>
+              )}
+            </button>
+
+            <div
+              id="user-menu-dropdown"
+              class="absolute right-0 mt-3 hidden min-w-[13rem] overflow-hidden rounded-2xl border border-white/10 bg-white/95 p-2 shadow-2xl backdrop-blur dark:bg-gray-900/95"
+            >
+              <div class="px-3 py-2">
+                <div class="text-sm font-semibold text-gray-900 dark:text-white">{user.displayName}</div>
+                <div class="truncate text-xs text-gray-500 dark:text-gray-400">{user.email}</div>
+              </div>
+              <a href="/stars" class="block rounded-xl px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800">
+                {t.navFavorites}
+              </a>
+              <a href="/account" class="block rounded-xl px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800">
+                {t.navAccount}
+              </a>
+              <button
+                id="logout-button"
+                class="mt-1 block w-full rounded-xl px-3 py-2 text-left text-sm font-medium text-rose-600 transition hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/10"
+              >
+                {t.navLogout}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile menu button */}
+      <button
+        class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300"
+        id="mobile-menu-button"
+        aria-label="Toggle navigation menu"
+      >
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div class="md:hidden overflow-hidden transition-all duration-300 ease-in-out max-h-0" id="mobile-menu">
+      <div class="pt-4 pb-6 border-t border-gray-200 dark:border-gray-700">
+        <div class="space-y-2">
+          <button
+            id="mobile-language-toggle-button"
+            class="block w-full rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3 text-left text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            aria-label={t.navLanguageToggle}
+          >
+            {localeToggleLabel}
+          </button>
+          {navItems.map(item => (
+            <a
+              key={item.name}
+              href={item.href}
+              target={item.href.startsWith('http') ? '_blank' : undefined}
+              rel={item.href.startsWith('http') ? 'noreferrer' : undefined}
+              class="block px-4 py-3 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            >
+              {item.name}
+            </a>
+          ))}
+          {user && (
+            <>
+              <a
+                href="/stars"
+                class="block px-4 py-3 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+              >
+                {t.navFavorites}
+              </a>
+              <a
+                href="/account"
+                class="block px-4 py-3 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+              >
+                {t.navAccount}
+              </a>
+              <button
+                id="mobile-logout-button"
+                class="block w-full rounded-lg px-4 py-3 text-left text-base font-medium text-rose-600 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors duration-200"
+              >
+                {t.navLogout}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isExpanded = mobileMenu.style.maxHeight && mobileMenu.style.maxHeight !== '0px';
+
+        // Reset maxHeight to allow proper calculation
+        mobileMenu.style.maxHeight = '0';
+
+        // Remove hidden class to allow max-height animation
+        mobileMenu.classList.remove('hidden');
+
+        if (isExpanded) {
+          // Collapse
+          mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+          setTimeout(() => {
+            mobileMenu.style.maxHeight = '0';
+          }, 10);
+        } else {
+          // Expand - force reflow
+          void mobileMenu.offsetWidth;
+          mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+        }
+
+        // Update button icon
+        const svg = mobileMenuButton.querySelector('svg');
+        if (!isExpanded) {
+          // Change to close icon
+          svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
+        } else {
+          // Change back to menu icon
+          svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />';
+        }
+      });
+
+      // Close mobile menu when clicking outside (but not on the button)
+      document.addEventListener('click', (event) => {
+        if (!mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+          mobileMenu.classList.add('hidden');
+          mobileMenu.style.maxHeight = '0';
+          const svg = mobileMenuButton.querySelector('svg');
+          if (svg) {
+            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />';
+          }
+        }
+      });
+
+      // Prevent click propagation on button to avoid double toggle
+      mobileMenuButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+
+    const logoutButton = document.getElementById('logout-button');
+    const mobileLogoutButton = document.getElementById('mobile-logout-button');
+    async function logout() {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+      window.location.href = '/';
+    }
+    logoutButton?.addEventListener('click', logout);
+    mobileLogoutButton?.addEventListener('click', logout);
+
+    const userMenuRoot = document.getElementById('user-menu-root');
+    const userMenuButton = document.getElementById('user-menu-button');
+    const userMenuDropdown = document.getElementById('user-menu-dropdown');
+
+    if (userMenuRoot && userMenuButton && userMenuDropdown) {
+      const closeUserMenu = () => {
+        userMenuDropdown.classList.add('hidden');
+        userMenuButton.setAttribute('aria-expanded', 'false');
+      };
+
+      userMenuButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const willOpen = userMenuDropdown.classList.contains('hidden');
+        userMenuDropdown.classList.toggle('hidden', !willOpen);
+        userMenuButton.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!userMenuRoot.contains(event.target)) {
+          closeUserMenu();
+        }
+      });
+    }
+
+    const applyLocale = (nextLocale) => {
+      document.cookie = `nima_locale=${nextLocale}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
+      window.location.reload();
+    };
+
+    const languageToggleButton = document.getElementById('language-toggle-button');
+    const mobileLanguageToggleButton = document.getElementById('mobile-language-toggle-button');
+    const nextLocale = document.documentElement.lang?.toLowerCase().startsWith('zh') ? 'en' : 'zh';
+
+    languageToggleButton?.addEventListener('click', () => {
+      applyLocale(nextLocale);
+    });
+
+    mobileLanguageToggleButton?.addEventListener('click', () => {
+      applyLocale(nextLocale);
+    });
+  </script>
+</header>

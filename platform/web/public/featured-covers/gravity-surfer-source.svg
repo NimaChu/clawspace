@@ -1,0 +1,94 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="126" y1="42" x2="988" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1230"/>
+      <stop offset="0.45" stop-color="#16295B"/>
+      <stop offset="1" stop-color="#04101D"/>
+    </linearGradient>
+    <radialGradient id="glowBlue" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(306 124) rotate(90) scale(170 260)">
+      <stop stop-color="#59DAFF" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#59DAFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowPurple" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(934 134) rotate(90) scale(180 220)">
+      <stop stop-color="#8666FF" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#8666FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowOrange" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(780 494) rotate(90) scale(160 280)">
+      <stop stop-color="#FF7A59" stop-opacity="0.36"/>
+      <stop offset="1" stop-color="#FF7A59" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="wave" x1="202" y1="378" x2="1020" y2="303" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9AF8FF"/>
+      <stop offset="0.4" stop-color="#67DFFF"/>
+      <stop offset="1" stop-color="#2868D9"/>
+    </linearGradient>
+    <linearGradient id="lobsterBody" x1="493" y1="157" x2="560" y2="296" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFB278"/>
+      <stop offset="1" stop-color="#F05E3F"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="sharpGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#7AE8FF" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" rx="28" fill="url(#bg)"/>
+  <circle cx="306" cy="124" r="190" fill="url(#glowBlue)"/>
+  <circle cx="934" cy="134" r="190" fill="url(#glowPurple)"/>
+  <circle cx="780" cy="494" r="210" fill="url(#glowOrange)"/>
+
+  <g opacity="0.85">
+    <circle cx="112" cy="76" r="2" fill="white"/>
+    <circle cx="178" cy="132" r="1.8" fill="white"/>
+    <circle cx="284" cy="66" r="1.5" fill="white"/>
+    <circle cx="401" cy="92" r="1.6" fill="white"/>
+    <circle cx="1018" cy="78" r="2.2" fill="white"/>
+    <circle cx="1096" cy="132" r="1.4" fill="white"/>
+    <circle cx="972" cy="184" r="1.6" fill="white"/>
+    <circle cx="1150" cy="242" r="2" fill="white"/>
+    <circle cx="138" cy="526" r="1.8" fill="white"/>
+    <circle cx="214" cy="552" r="1.4" fill="white"/>
+    <circle cx="1038" cy="508" r="1.8" fill="white"/>
+    <circle cx="1098" cy="544" r="1.6" fill="white"/>
+  </g>
+
+  <g opacity="0.9" stroke="#8DEBFF" stroke-width="6">
+    <path d="M562 302C598 242 667 214 758 214C849 214 924 243 976 300" opacity="0.75"/>
+    <path d="M514 316C580 252 667 226 768 226C869 226 955 252 1028 308" opacity="0.56"/>
+    <path d="M460 334C556 264 670 240 792 240C914 240 1012 267 1096 322" opacity="0.42"/>
+  </g>
+
+  <g filter="url(#soft)" opacity="0.45">
+    <path d="M184 432C276 397 410 360 562 332C698 306 846 300 1042 322" stroke="#3D9FFF" stroke-width="46" stroke-linecap="round"/>
+  </g>
+  <path d="M186 414C294 388 414 358 556 332C694 306 845 299 1036 316" stroke="url(#wave)" stroke-width="14" stroke-linecap="round" filter="url(#sharpGlow)"/>
+
+  <g transform="translate(422 142)">
+    <rect x="12" y="146" width="188" height="54" rx="27" fill="#8CE8FF" stroke="#F8FEFF" stroke-width="4"/>
+    <path d="M0 190C24 198 48 204 74 208" stroke="#DFFAFF" stroke-opacity="0.7" stroke-width="7" stroke-linecap="round"/>
+    <ellipse cx="104" cy="88" rx="56" ry="52" fill="url(#lobsterBody)" stroke="#FFE2D3" stroke-width="4"/>
+    <ellipse cx="110" cy="38" rx="34" ry="32" fill="#FF9E6B" stroke="#FFE2D3" stroke-width="4"/>
+    <circle cx="98" cy="35" r="5" fill="#15192A"/>
+    <circle cx="122" cy="35" r="5" fill="#15192A"/>
+    <path d="M81 11C90 -4 103 -14 121 -20" stroke="#FFD7C6" stroke-width="4" stroke-linecap="round"/>
+    <path d="M116 8C128 -6 145 -17 165 -24" stroke="#FFD7C6" stroke-width="4" stroke-linecap="round"/>
+    <path d="M58 71C38 62 25 53 14 42" stroke="#FFBF97" stroke-width="10" stroke-linecap="round"/>
+    <path d="M149 67C173 56 190 44 204 28" stroke="#FFBF97" stroke-width="10" stroke-linecap="round"/>
+    <path d="M72 138L46 174" stroke="#FFC1A2" stroke-width="5" stroke-linecap="round"/>
+    <path d="M94 144L76 182" stroke="#FFC1A2" stroke-width="5" stroke-linecap="round"/>
+    <path d="M116 144L108 182" stroke="#FFC1A2" stroke-width="5" stroke-linecap="round"/>
+    <path d="M138 141L144 176" stroke="#FFC1A2" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <g fill="#FFF4C0" opacity="0.95">
+    <path d="M742 228L752 248L772 258L752 268L742 288L732 268L712 258L732 248L742 228Z"/>
+    <path d="M802 198L808 210L820 216L808 222L802 236L796 222L784 216L796 210L802 198Z"/>
+    <path d="M858 232L866 246L880 252L866 258L858 274L850 258L836 252L850 246L858 232Z"/>
+  </g>
+
+  <text x="86" y="132" fill="#F4FAFF" font-size="56" font-weight="800" font-family="Arial, Helvetica, sans-serif">GRAVITY SURFER</text>
+  <text x="88" y="182" fill="#A9DFF7" font-size="22" font-weight="500" font-family="Arial, Helvetica, sans-serif">Ride the wave. Dodge the debris. Chase the starlight.</text>
+  <text x="88" y="516" fill="#FFB48A" font-size="24" font-weight="700" font-family="Arial, Helvetica, sans-serif">CLAWSPACE featured project</text>
+</svg>

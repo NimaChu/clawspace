@@ -1,0 +1,98 @@
+---
+import Layout from '../components/Layout.astro';
+import { getTranslations } from '../lib/i18n.js';
+const t = getTranslations(Astro.request);
+---
+
+<Layout title={t.registerTitle} description={t.registerDescription}>
+  <section class="min-h-screen bg-[#0a0a0a] py-16 lg:py-24">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <div class="grid gap-8 lg:grid-cols-2">
+        <div class="rounded-3xl border border-white/10 bg-[#141414] p-8">
+          <p class="text-sm uppercase tracking-[0.18em] text-cyan-300">Create Account</p>
+          <h1 class="mt-4 text-4xl font-bold text-white">{t.registerHeading}</h1>
+          <p class="mt-4 text-gray-400">{t.registerIntro}</p>
+
+          <form id="register-form" class="mt-8 space-y-5">
+            <label class="block">
+              <span class="mb-2 block text-sm text-gray-400">{t.registerDisplayName}</span>
+              <input name="displayName" type="text" autocomplete="name" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white" />
+            </label>
+            <label class="block">
+              <span class="mb-2 block text-sm text-gray-400">{t.registerEmail}</span>
+              <input name="email" type="email" autocomplete="email" required class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white" />
+            </label>
+            <label class="block">
+              <span class="mb-2 block text-sm text-gray-400">{t.registerPassword}</span>
+              <div class="relative">
+                <input
+                  id="register-password"
+                  name="password"
+                  type="password"
+                  autocomplete="new-password"
+                  minlength="8"
+                  required
+                  class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 pr-20 text-white"
+                />
+                <button
+                  id="toggle-register-password"
+                  type="button"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-3 py-1 text-sm text-cyan-300 hover:bg-white/5"
+                >
+                  {t.loginShow}
+                </button>
+              </div>
+            </label>
+            <button type="submit" class="w-full rounded-2xl bg-cyan-400 px-5 py-3 font-semibold text-black">{t.registerSubmit}</button>
+          </form>
+
+          <p id="register-status" class="mt-4 text-sm text-gray-400"></p>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-[#101010] p-8">
+          <h2 class="text-2xl font-semibold text-white">{t.registerGithubTitle}</h2>
+          <p class="mt-3 text-gray-400">{t.registerGithubDesc}</p>
+          <a href="/api/auth/github/start?next=%2Fadmin%2Fimport" class="mt-6 inline-flex rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-white hover:bg-white/10">
+            {t.registerGithubButton}
+          </a>
+
+          <p class="mt-10 text-sm text-gray-400">
+            {t.registerHasAccount}<a href="/login" class="text-cyan-300 hover:text-cyan-200">{t.registerGoLogin}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script define:vars={{ showText: t.loginShow, hideText: t.loginHide, loadingText: t.registerLoading, failedText: t.registerFailed }}>
+    const form = document.getElementById('register-form');
+    const status = document.getElementById('register-status');
+    const passwordInput = document.getElementById('register-password');
+    const togglePasswordButton = document.getElementById('toggle-register-password');
+
+    togglePasswordButton?.addEventListener('click', () => {
+      if (!passwordInput) return;
+      const nextType = passwordInput.type === 'password' ? 'text' : 'password';
+      passwordInput.type = nextType;
+      togglePasswordButton.textContent = nextType === 'password' ? showText : hideText;
+    });
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      status.textContent = loadingText;
+
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        body: new FormData(form),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        status.textContent = result.error || failedText;
+        return;
+      }
+
+      window.location.href = '/admin/import';
+    });
+  </script>
+</Layout>

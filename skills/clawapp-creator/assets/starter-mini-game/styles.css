@@ -1,0 +1,186 @@
+:root {
+  color-scheme: dark;
+  --bg: #040816;
+  --panel: rgba(10, 18, 32, 0.78);
+  --line: rgba(255, 255, 255, 0.1);
+  --text: #eef6ff;
+  --muted: #9fb5c9;
+  --accent: #4ade80;
+  --accent-2: #38bdf8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top, rgba(59, 130, 246, 0.22), transparent 28%),
+    radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.14), transparent 20%),
+    linear-gradient(180deg, #09111f 0%, var(--bg) 100%);
+}
+
+.app-shell {
+  width: min(1080px, calc(100% - 32px));
+  margin: 0 auto;
+  min-height: 100vh;
+  display: grid;
+  gap: 24px;
+  align-items: center;
+  grid-template-columns: 1fr 1.1fr;
+}
+
+.hud,
+.game-board {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  border-radius: 28px;
+}
+
+.hud {
+  padding: 32px;
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--accent-2);
+  font-size: 12px;
+}
+
+h1 {
+  margin: 16px 0 10px;
+  font-size: clamp(36px, 5vw, 64px);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 28px 0;
+}
+
+.stat-card {
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.stat-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 28px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.status-line {
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+#start-button {
+  color: #032311;
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+}
+
+.ghost {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
+}
+
+.game-board {
+  position: relative;
+  min-height: 560px;
+  overflow: hidden;
+}
+
+.orbit {
+  position: absolute;
+  inset: 50%;
+  border-radius: 50%;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  transform: translate(-50%, -50%);
+}
+
+.orbit-a {
+  width: 260px;
+  height: 260px;
+}
+
+.orbit-b {
+  width: 420px;
+  height: 420px;
+}
+
+.planet {
+  position: absolute;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  padding: 0;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), transparent 22%),
+    linear-gradient(160deg, #60a5fa, #22d3ee 55%, #1d4ed8 100%);
+  box-shadow: 0 0 32px rgba(56, 189, 248, 0.35);
+}
+
+.planet:active {
+  transform: scale(0.94);
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    padding: 16px 0;
+    min-height: 100dvh;
+    align-content: start;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hud {
+    padding: 22px 18px;
+  }
+
+  .game-board {
+    min-height: min(54dvh, 420px);
+  }
+}

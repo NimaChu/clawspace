@@ -1,0 +1,7 @@
+interface:
+  display_name: "ClawApp Creator"
+  short_description: "打包并上传站点应用的工作流"
+  default_prompt: "Use $clawapp-creator to turn my app or mini-game into a Nima Tech Space package and upload it if possible."
+
+policy:
+  allow_implicit_invocation: true

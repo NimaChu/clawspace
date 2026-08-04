@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>__APP_NAME__</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>__APP_NAME__</h1>
+            <p>上传图片即可解析文字或图像内容</p>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <div class="drop-zone" id="dropZone">
+                    <p>拖拽图片到这里或点击上传</p>
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                    <button id="browseBtn">选择图片</button>
+                </div>
+
+                <div class="preview-container">
+                    <img id="imagePreview" src="" alt="图片预览" style="display: none;">
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="analyzeBtn" disabled>开始分析</button>
+                <button id="resetBtn">重置</button>
+            </div>
+
+            <div class="result-section">
+                <h3>分析结果</h3>
+                <div id="result" class="result-box"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>使用平台多模态 AI 模型进行图像分析</p>
+        </footer>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+</html>

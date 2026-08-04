@@ -1,0 +1,46 @@
+---
+import Layout from '../../components/Layout.astro';
+import { getCurrentUser } from '../../lib/auth.js';
+import { getCreatorBySlug, getCreatorPath, getCreatorSlugForUser, slugifyCreatorName } from '../../lib/creator-universe.js';
+import { getTranslations } from '../../lib/i18n.js';
+
+const currentUser = await getCurrentUser(Astro.request);
+const t = getTranslations(Astro.request);
+
+if (!currentUser) {
+  return Astro.redirect('/login?next=%2Fcreators%2Fme');
+}
+
+const slug = (await getCreatorSlugForUser(currentUser)) || slugifyCreatorName(currentUser.displayName || currentUser.email || '');
+const creator = await getCreatorBySlug(slug, { includeUnpublished: true });
+
+if (creator) {
+  return Astro.redirect(getCreatorPath(creator.slug));
+}
+---
+
+<Layout title={t.myCreatorTitle} description={t.myCreatorDescription}>
+  <section class="min-h-screen bg-[#050816] text-white grid place-items-center">
+    <div class="max-w-2xl px-6 text-center">
+      <p class="text-sm uppercase tracking-[0.3em] text-cyan-200">{t.myCreatorBadge}</p>
+      <h1 class="mt-4 text-4xl font-semibold">{t.myCreatorEmptyTitle}</h1>
+      <p class="mt-5 text-lg leading-8 text-slate-300">
+        {t.myCreatorEmptyDesc}
+      </p>
+      <div class="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
+        <a
+          href="/admin/import"
+          class="inline-flex items-center justify-center rounded-2xl bg-cyan-400 px-7 py-3.5 text-base font-semibold text-slate-950"
+        >
+          {t.myCreatorGoImport}
+        </a>
+        <a
+          href="/"
+          class="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/5 px-7 py-3.5 text-base font-semibold text-white"
+        >
+          {t.backToHome}
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

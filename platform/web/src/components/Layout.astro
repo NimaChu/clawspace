@@ -1,0 +1,47 @@
+---
+// src/components/Layout.astro
+import Header from './HeaderImproved.astro';
+import Footer from './Footer.astro';
+import GoogleFonts from './GoogleFonts.astro';
+import '../styles/design-system.css';
+import '../styles/global.css';
+import { getCurrentUser } from '../lib/auth.js';
+import { getTranslations } from '../lib/i18n.js';
+
+const {
+  title = 'Nima Tech Space',
+  description,
+} = Astro.props;
+const currentUser = await getCurrentUser(Astro.request);
+const t = getTranslations(Astro.request);
+const metaDescription = description || t.siteDescription;
+---
+
+<!DOCTYPE html>
+<html lang={t.lang} class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="description" content={metaDescription} />
+  <title>{title === t.siteTitle ? title : `${title} | ${t.siteTitle}`}</title>
+  <!-- Google Fonts -->
+  <GoogleFonts />
+  <!-- Mobile Optimized Styles -->
+  <link rel="stylesheet" href="/styles/mobile-optimized.css" />
+  <script>
+    // Theme toggle script
+    if (localStorage.getItem('theme') === 'dark' ||
+        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+</head>
+<body class="font-plus-jakarta bg-[#0a0a0a] text-gray-100 min-h-screen flex flex-col">
+  <Header currentUser={currentUser} locale={t.lang} />
+  <main class="flex-grow">
+    <slot />
+  </main>
+  <Footer locale={t.lang} />
+</body>
+</html>

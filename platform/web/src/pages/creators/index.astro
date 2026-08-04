@@ -1,0 +1,78 @@
+---
+import Layout from '../../components/Layout.astro';
+import { getCreatorPath, getCreators } from '../../lib/creator-universe.js';
+import { getTranslations } from '../../lib/i18n.js';
+
+const creators = await getCreators();
+const t = getTranslations(Astro.request);
+---
+
+<Layout title={t.creatorRankingTitle} description={t.creatorRankingDesc}>
+  <section class="min-h-screen bg-[#050816] text-white">
+    <div class="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_top,rgba(16,24,48,0.96),rgba(5,8,22,0.98))]">
+      <div class="absolute inset-0 opacity-70 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.16)_0,transparent_16%),radial-gradient(circle_at_80%_18%,rgba(255,255,255,0.12)_0,transparent_12%),radial-gradient(circle_at_60%_70%,rgba(255,255,255,0.12)_0,transparent_12%)]"></div>
+      <div class="container mx-auto px-4 py-14 lg:py-20 relative z-10">
+        <a href="/" class="inline-flex items-center text-slate-300 hover:text-white transition-colors">
+          <svg class="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          {t.creatorBackHome}
+        </a>
+
+        <div class="mt-10 grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div>
+            <p class="text-sm uppercase tracking-[0.32em] text-cyan-200">{t.creatorRankingBadge}</p>
+            <h1 class="mt-4 text-5xl font-semibold">{t.creatorRankingHeading}</h1>
+            <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-300">
+              {t.creatorRankingIntro}
+            </p>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-3">
+            <div class="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+              <div class="text-3xl font-semibold">{creators.length}</div>
+              <div class="mt-2 text-xs uppercase tracking-[0.24em] text-slate-400">{t.creatorCount}</div>
+            </div>
+            <div class="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+              <div class="text-3xl font-semibold">{creators[0]?.totalStars || 0}</div>
+              <div class="mt-2 text-xs uppercase tracking-[0.24em] text-slate-400">{t.creatorTopStars}</div>
+            </div>
+            <div class="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+              <div class="text-3xl font-semibold">{t.creatorUniverseStatusValue}</div>
+              <div class="mt-2 text-xs uppercase tracking-[0.24em] text-slate-400">{t.creatorUniverseStatus}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-16">
+      <div class="overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur">
+        <div class="grid grid-cols-[84px_1.3fr_0.8fr_0.7fr] gap-4 border-b border-white/10 px-6 py-4 text-xs uppercase tracking-[0.24em] text-slate-400">
+          <div>{t.creatorRank}</div>
+          <div>{t.appAuthor}</div>
+          <div>{t.creatorWorks}</div>
+          <div>{t.creatorStars}</div>
+        </div>
+
+        {creators.map((creator, index) => (
+          <a
+            href={getCreatorPath(creator.slug)}
+            class="grid grid-cols-[84px_1.3fr_0.8fr_0.7fr] gap-4 border-b border-white/8 px-6 py-5 transition-colors hover:bg-white/6"
+          >
+            <div class="flex items-center text-lg font-semibold text-cyan-200">#{index + 1}</div>
+            <div class="flex items-center gap-4 min-w-0">
+              <div class={`h-12 w-12 shrink-0 rounded-full bg-gradient-to-br ${creator.accent}`}></div>
+              <div class="min-w-0">
+                <div class="truncate text-lg font-semibold text-white">{creator.name}</div>
+                <div class="truncate text-sm text-slate-400">{creator.headline}</div>
+              </div>
+            </div>
+            <div class="flex items-center text-slate-300">{creator.works.length}</div>
+            <div class="flex items-center text-amber-200 font-medium">{creator.totalStars}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

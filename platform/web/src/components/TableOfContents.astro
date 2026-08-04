@@ -1,0 +1,25 @@
+---
+// src/components/TableOfContents.astro
+// This component will be enhanced with JavaScript to extract headings from the content
+// For now, we'll create a placeholder that can be populated dynamically
+const { headings } = Astro.props;
+---
+
+{headings && headings.length > 0 && (
+  <aside class="hidden lg:block lg:col-span-3">
+    <div class="sticky top-24">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">目录</h3>
+      <nav class="space-y-2">
+        {headings.map(heading => (
+          <a
+            href={`#${heading.id}`}
+            class="block text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            style={`margin-left: ${Math.max(0, (heading.level - 2) * 12)}px`}
+          >
+            {heading.text}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </aside>
+)}

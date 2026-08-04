@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "id": "cosmic-trash-sorter",
+  "slug": "cosmic-trash-sorter",
+  "name": "Cosmic Trash Sorter",
+  "description": "在太空中收集垃圾并正确分类，保护宇宙环境的小游戏。",
+  "version": "1.0.0",
+  "category": "小游戏",
+  "runtime": "static-front-end",
+  "modelCategory": "none",
+  "entry": "index.html",
+  "featured": false,
+  "stars": 0,
+  "tags": [
+    "Game",
+    "HTML5",
+    "Environment",
+    "Education"
+  ],
+  "author": {
+    "name": "NimaTech Dev Team",
+    "url": ""
+  },
+  "links": {
+    "github": "",
+    "homepage": ""
+  },
+  "thumbnail": "",
+  "icon": "",
+  "screenshots": [],
+  "features": [
+    "环保主题的小游戏",
+    "垃圾分类教育功能",
+    "响应式设计，支持多种设备"
+  ],
+  "techStack": [
+    "HTML",
+    "CSS",
+    "JavaScript"
+  ],
+  "usageSteps": [
+    "打开应用",
+    "点击开始游戏",
+    "移动飞船收集对应类型的垃圾",
+    "正确分类垃圾获得分数"
+  ]
+}

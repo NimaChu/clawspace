@@ -1,61 +1,68 @@
 # CLAWSPACE
 
-CLAWSPACE is a universe for playful imagination.
+CLAWSPACE is an open-source, local-first publishing platform for small web apps and browser games created by people and AI agents such as OpenClaw.
 
-It is a public home for open-source web apps and mini-games made by humans, and made easier with OpenClaw.
+This repository contains the platform website, the `clawapp-creator` skill, and curated example apps. Runtime user data, credentials, uploaded packages, production secrets, and the CLAWSPACE Mini Program source are intentionally excluded.
 
-[🌐 Visit the website](https://www.nima-tech.space) · [⚡ Install clawapp-creator on ClawHub](https://clawhub.ai/NimaChu/clawapp-creator) · [🧰 GitHub fallback](https://github.com/NimaChu/clawapp-creator)
+## Repository layout
 
-![CLAWSPACE homepage](./docs/screenshots/homepage-v3.jpg)
+```text
+platform/
+  web/                  Astro website, APIs, admin tools, and local runtime
+skills/
+  clawapp-creator/      OpenClaw/Codex skill for creating and publishing apps
+examples/
+  gravity-surfer/       Curated static mini-game example
+docs/                   Architecture, package contract, and license boundaries
+```
 
-## At a glance
+## What CLAWSPACE provides
 
-- 🪐 A public atlas for browser apps and mini-games
-- 🦞 Built for creators working with OpenClaw
-- 🤖 Supports shared platform models for text, multimodal, and code apps
-- 📦 Every app can have a detail page, launch page, and downloadable package
+- app and mini-game publishing with ownership-aware slug updates
+- creator pages, stars, favorites, sharing, and score records
+- static app launch and download endpoints
+- optional shared text, multimodal, and code model access
+- an agent skill that scaffolds, validates, packages, and uploads apps
+- local filesystem storage for self-hosted operation
 
-[Visit the website](https://www.nima-tech.space)
+## Run the website locally
 
-## What CLAWSPACE is
+Requirements:
 
-CLAWSPACE is a place where creators can:
+- Node.js 24
+- npm
+- optional DashScope API key for model-backed apps
 
-- upload static front-end apps and mini-games
-- launch and play them directly in the browser
-- download app packages from the site
-- share their creator page and build a body of work
-- optionally connect to the platform model API for free shared AI access
+```bash
+cd platform/web
+npm ci
+npm run dev:local
+```
 
-This is not just a gallery. It is a publishable app space.
+Open <http://127.0.0.1:4321>.
 
-## Who it is for
+The `dev:local` and `serve:local` commands force filesystem storage and do not connect to Neon or Vercel Blob. Local runtime data is written under `platform/web/runtime/`, which is ignored by Git.
 
-CLAWSPACE is designed for:
+No environment variables are required to open the public marketplace locally. To test administrator features, copy `.env.example` to `.env`, set `ADMIN_EMAIL` before registering that address, then restart the server. For a clean production build, also install the bundled example dependencies:
 
-- OpenClaw users who want to turn ideas into apps quickly
-- indie makers building small interactive tools or games
-- creators who want a lightweight way to publish browser experiences
-- people who want to explore playful, experimental, open-source projects
+```bash
+cd platform/web
+npm ci
+npm ci --prefix apps/sources/comeback
+npm run build
+```
 
-## Website
+For Apple Container deployment, see [Apple Container setup](./platform/web/APPLE_CONTAINER.md). For the complete local runtime notes, see [local runtime guide](./platform/web/LOCAL_RUNTIME.md).
 
-- 🌐 Website: [https://www.nima-tech.space](https://www.nima-tech.space)
-- 🪐 App atlas: [https://www.nima-tech.space/#apps](https://www.nima-tech.space/#apps)
-- 🏆 Creator ranking: [https://www.nima-tech.space/creators](https://www.nima-tech.space/creators)
-- 📦 Upload page: [https://www.nima-tech.space/admin/import](https://www.nima-tech.space/admin/import)
+## Install the creator skill
 
-## How publishing works
+Copy `skills/clawapp-creator/` into the skills directory used by your OpenClaw or compatible agent, then read its `SKILL.md` entrypoint.
 
-1. Build a static front-end app or mini-game.
-2. Package it into the CLAWSPACE upload format.
-3. Log in on the site.
-4. Upload the zip package.
-5. The app gets a detail page, launch page, and downloadable package link.
+The skill never ships account credentials. Each operator configures their own CLAWSPACE account locally, preferably using the macOS Keychain when available.
 
-## Package format
+## App package format
 
-Each app package is a zip file with this root structure:
+Published apps use this root structure:
 
 ```text
 manifest.json
@@ -64,112 +71,30 @@ assets/              # optional
 app/                 # required
 ```
 
-Minimum `manifest.json` example:
+See [the platform contract](./docs/platform-contract.md) and the website's [full package specification](./platform/web/docs/app-package-spec.md).
 
-```json
-{
-  "schemaVersion": 1,
-  "id": "orbit-tap",
-  "slug": "orbit-tap",
-  "name": "Orbit Tap",
-  "description": "A lightweight browser mini-game.",
-  "version": "1.0.0",
-  "modelCategory": "none",
-  "entry": "app/index.html"
-}
-```
+## Data and secrets
 
-Notes:
+The public repository does not contain:
 
-- Only static front-end apps and mini-games are supported.
-- The entry file must stay inside `app/`.
-- The zip should stay at or under `25MB`.
-- The same user can upload the same slug again to update their app.
-- A different user cannot overwrite an existing slug owned by someone else.
+- user accounts, password hashes, sessions, favorites, scores, or admin state
+- uploaded applications or production runtime registries
+- API keys, OAuth secrets, database URLs, or Blob tokens
+- CLAWSPACE Mini Program source and private project configuration
+- dependency directories, generated builds, or app archives
 
-More details:
+Use the checked-in `.env.example` files to create local configuration. Never commit populated `.env` files.
 
-- 📘 [Platform contract](./docs/platform-contract.md)
-- 🤖 [Model API guide](./docs/model-api.md)
+For any Internet-facing deployment, set `ADMIN_EMAIL`, serve the site over HTTPS, and configure `HOSTED_APPS_ORIGIN` to a separate origin such as `https://apps.example.com`. Uploaded apps contain untrusted JavaScript and must not share the account/admin origin in production. See [the open-source boundary](./docs/open-source-boundary.md) and [security policy](./SECURITY.md).
 
-## OpenClaw workflow
+## Project status
 
-If you use OpenClaw, the easiest way to create and publish apps for CLAWSPACE is the `clawapp-creator` skill.
+CLAWSPACE previously used Vercel, Neon, and Vercel Blob. The current source supports local filesystem operation and Apple Container deployment; hosting is intentionally provider-neutral and remains an active workstream.
 
-Recommended install route:
+## Contributing
 
-- ⚡ [ClawHub: NimaChu/clawapp-creator](https://clawhub.ai/NimaChu/clawapp-creator)
-
-Fallback install route:
-
-- 🧰 [GitHub: NimaChu/clawapp-creator](https://github.com/NimaChu/clawapp-creator)
-
-You can copy this sentence directly into OpenClaw:
-
-```text
-Please install the skill named clawapp-creator from https://clawhub.ai/NimaChu/clawapp-creator . If ClawHub is rate limited, fall back to the GitHub repository NimaChu/clawapp-creator.
-```
-
-What the skill helps with:
-
-- scaffold a new mini-game
-- scaffold OCR and multimodal app starters
-- adapt an existing static app
-- generate a compliant manifest
-- package the app as a zip
-- validate slug ownership
-- upload the package to CLAWSPACE
-
-Skill repository:
-
-- [NimaChu/clawapp-creator](https://github.com/NimaChu/clawapp-creator)
-
-## Platform model support
-
-Apps that need AI can use the platform model API instead of embedding their own client-side API keys.
-
-Supported model categories:
-
-- `none`
-- `text`
-- `multimodal`
-- `code`
-
-If the app does not need AI, keep `modelCategory` as `none`.
-
-## Example apps
-
-- 🔁 [Comeback](https://www.nima-tech.space/apps/comeback-project)
-- 🧩 [Tetris Orbit](https://www.nima-tech.space/apps/tetris-orbit)
-- 🦞 [Lobster Factory](https://www.nima-tech.space/apps/lobster-factory)
-
-## What creators can build
-
-Great fits for CLAWSPACE include:
-
-- lightweight browser games
-- playful utilities and toy tools
-- OCR and image-analysis apps using the platform multimodal model
-- text and code helpers that use the shared model API
-- experimental interactive demos that are easy to launch and share
-
-## Why this repo exists
-
-This repository is the public home of CLAWSPACE.
-
-It exists to:
-
-- explain what the platform is
-- document the upload format
-- help creators publish apps and games
-- provide a shareable GitHub project people can follow and star
-
-The production website code is not hosted in this public repository.
-
-## Community
-
-If you want to suggest ideas for the platform, improve docs, or request publishing features, open an issue in this repository.
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a pull request. Security reports should follow [SECURITY.md](./SECURITY.md) instead of being filed publicly.
 
 ## License
 
-[MIT](./LICENSE)
+The platform source, skill source, documentation, and explicitly included examples are available under the [MIT License](./LICENSE). Brand assets, trademarks, third-party dependencies, and user-created applications have separate boundaries described in [LICENSE_SCOPE.md](./LICENSE_SCOPE.md).

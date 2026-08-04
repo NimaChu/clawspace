@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#112526"/>
+      <stop offset="55%" stop-color="#244E56"/>
+      <stop offset="100%" stop-color="#0A171A"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="20%" cy="18%" r="80%">
+      <stop offset="0%" stop-color="#7EF1D0" stop-opacity=".92"/>
+      <stop offset="100%" stop-color="#7EF1D0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="80%" cy="76%" r="70%">
+      <stop offset="0%" stop-color="#5C87FF" stop-opacity=".54"/>
+      <stop offset="100%" stop-color="#5C87FF" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="22"/></filter>
+    <style>
+      :root {
+        --lobster: #FF785E;
+        --cream: #FFF0E0;
+      }
+      text { font-family: Arial, Helvetica, sans-serif; }
+      .title { font-size: 66px; font-weight: 800; fill: white; letter-spacing: .02em; }
+      .subtitle { font-size: 25px; fill: rgba(255,255,255,.82); }
+      .kicker { font-size: 17px; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; fill: rgba(255,255,255,.55); }
+    </style>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <circle cx="240" cy="150" r="250" fill="url(#glowA)" filter="url(#soft)"/>
+  <circle cx="1090" cy="590" r="240" fill="url(#glowB)" filter="url(#soft)"/>
+  <g opacity=".22" stroke="rgba(255,255,255,.38)" stroke-width="2" fill="none">
+    <path d="M42 150 C270 60, 560 76, 830 182"/>
+    <path d="M610 660 C860 520, 1110 520, 1236 612"/>
+  </g>
+  <rect x="78" y="54" width="1124" height="612" rx="42" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+
+    <g transform="translate(136 122)">
+      <text class="kicker" x="0" y="0">CLAWSPACE DEFAULT COVER</text>
+      <text class="title" x="0" y="92">CLAWSPACE TOOLS</text>
+      <text class="subtitle" x="0" y="144">Default cover for practical utilities and lightweight helpers.</text>
+    </g>
+
+
+
+<g transform="translate(144 274) scale(1.02)">
+  <ellipse cx="88" cy="150" rx="66" ry="92" fill="var(--lobster)" />
+  <ellipse cx="88" cy="86" rx="56" ry="52" fill="var(--lobster)" />
+  <ellipse cx="88" cy="92" rx="34" ry="28" fill="var(--cream)" />
+  <circle cx="72" cy="72" r="7" fill="#fff" />
+  <circle cx="104" cy="72" r="7" fill="#fff" />
+  <circle cx="72" cy="72" r="3" fill="#0f172a" />
+  <circle cx="104" cy="72" r="3" fill="#0f172a" />
+  <path d="M77 95 Q88 106 99 95" stroke="#0f172a" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M58 40 Q36 12 18 28" stroke="#FFB454" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M118 40 Q140 12 158 28" stroke="#FFB454" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <circle cx="18" cy="28" r="10" fill="#FFB454" />
+  <circle cx="158" cy="28" r="10" fill="#FFB454" />
+  <ellipse cx="36" cy="152" rx="24" ry="16" fill="#FFB454" transform="rotate(-24 36 152)" />
+  <ellipse cx="140" cy="152" rx="24" ry="16" fill="#FFB454" transform="rotate(24 140 152)" />
+  <path d="M53 206 Q34 228 18 214" stroke="var(--cream)" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M123 206 Q142 228 158 214" stroke="var(--cream)" stroke-width="9" fill="none" stroke-linecap="round"/>
+</g>
+  <g transform="translate(492 176)">
+    <rect x="0" y="0" width="532" height="336" rx="30" fill="rgba(10,16,25,.8)" stroke="rgba(255,255,255,.16)"/>
+    <rect x="38" y="42" width="198" height="104" rx="22" fill="#7EF1D0"/>
+    <text x="68" y="111" font-size="50" font-weight="800" fill="#0C172B">24:00</text>
+    <rect x="276" y="42" width="202" height="104" rx="22" fill="#5C87FF"/>
+    <text x="326" y="106" font-size="38" font-weight="800" fill="#fff">SHIP</text>
+    <rect x="38" y="184" width="440" height="42" rx="21" fill="rgba(255,255,255,.08)"/>
+    <rect x="38" y="184" width="318" height="42" rx="21" fill="#FFB454" opacity=".92"/>
+    <path d="M54 276 h128" stroke="#FFB454" stroke-width="14" stroke-linecap="round"/>
+    <path d="M202 276 h136" stroke="#7EF1D0" stroke-width="14" stroke-linecap="round"/>
+  </g>
+</svg>

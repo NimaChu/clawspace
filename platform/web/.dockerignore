@@ -1,0 +1,13 @@
+.astro
+.DS_Store
+.env
+.env.*
+.git
+.github
+.vercel
+dist
+node_modules
+**/dist
+**/node_modules
+runtime
+*.log

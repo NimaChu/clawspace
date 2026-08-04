@@ -1,0 +1,113 @@
+---
+import Layout from '../components/Layout.astro';
+import { getTranslations } from '../lib/i18n.js';
+
+const error = Astro.url.searchParams.get('error');
+const next = Astro.url.searchParams.get('next') || '/admin/import';
+const t = getTranslations(Astro.request);
+---
+
+<Layout title={t.loginTitle} description={t.loginDescription}>
+  <section class="min-h-screen bg-[#0a0a0a] py-16 lg:py-24">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <div class="grid gap-8 lg:grid-cols-2">
+        <div class="rounded-3xl border border-white/10 bg-[#141414] p-8">
+          <p class="text-sm uppercase tracking-[0.18em] text-cyan-300">Account</p>
+          <h1 class="mt-4 text-4xl font-bold text-white">{t.loginHeading}</h1>
+          <p class="mt-4 text-gray-400">{t.loginIntro}</p>
+
+          {error && (
+            <div class="mt-6 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+              {error}
+            </div>
+          )}
+
+          <form id="login-form" class="mt-8 space-y-5">
+            <input type="hidden" name="next" value={next} />
+            <label class="block">
+              <span class="mb-2 block text-sm text-gray-400">{t.loginEmail}</span>
+              <input name="email" type="email" autocomplete="email" required class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white" />
+            </label>
+            <label class="block">
+              <span class="mb-2 block text-sm text-gray-400">{t.loginPassword}</span>
+              <div class="relative">
+                <input
+                  id="login-password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                  class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 pr-20 text-white"
+                />
+                <button
+                  id="toggle-login-password"
+                  type="button"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-3 py-1 text-sm text-cyan-300 hover:bg-white/5"
+                >
+                  {t.loginShow}
+                </button>
+              </div>
+            </label>
+            <button type="submit" class="w-full rounded-2xl bg-cyan-400 px-5 py-3 font-semibold text-black">{t.loginSubmit}</button>
+          </form>
+
+          <a
+            href={`/api/auth/github/start?next=${encodeURIComponent(next)}`}
+            class="mt-4 inline-flex w-full items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-5 py-3 font-semibold text-white hover:bg-white/10"
+          >
+            {t.loginGithub}
+          </a>
+
+          <p id="login-status" class="mt-4 text-sm text-gray-400"></p>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-[#101010] p-8">
+          <h2 class="text-2xl font-semibold text-white">{t.loginNoAccount}</h2>
+          <p class="mt-3 text-gray-400">{t.loginNoAccountDesc}</p>
+          <a href="/register" class="mt-6 inline-flex rounded-2xl border border-cyan-500/30 px-5 py-3 text-cyan-300 hover:bg-cyan-500/10">
+            {t.loginGoRegister}
+          </a>
+
+          <div class="mt-10 rounded-2xl bg-white/5 p-5 text-sm text-gray-300">
+            <p class="font-medium text-white">{t.loginGithubNote}</p>
+            <p class="mt-3">{t.loginGithubDesc1}</p>
+            <p class="mt-3">{t.loginGithubDesc2}</p>
+            <p class="mt-2 text-gray-400">`GITHUB_CLIENT_ID` 和 `GITHUB_CLIENT_SECRET`</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script define:vars={{ next, showText: t.loginShow, hideText: t.loginHide, loadingText: t.loginLoading, failedText: t.loginFailed }}>
+    const form = document.getElementById('login-form');
+    const status = document.getElementById('login-status');
+    const passwordInput = document.getElementById('login-password');
+    const togglePasswordButton = document.getElementById('toggle-login-password');
+
+    togglePasswordButton?.addEventListener('click', () => {
+      if (!passwordInput) return;
+      const nextType = passwordInput.type === 'password' ? 'text' : 'password';
+      passwordInput.type = nextType;
+      togglePasswordButton.textContent = nextType === 'password' ? showText : hideText;
+    });
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      status.textContent = loadingText;
+
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        body: new FormData(form),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        status.textContent = result.error || failedText;
+        return;
+      }
+
+      window.location.href = next;
+    });
+  </script>
+</Layout>

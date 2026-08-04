@@ -1,0 +1,31 @@
+---
+// src/components/ArticleHeader.astro
+const { post } = Astro.props;
+---
+
+<header class="mb-12">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-6">
+      <time datetime={new Date(post.data.pubDate).toISOString()}>
+        {new Date(post.data.pubDate).toLocaleDateString('zh-CN')}
+      </time>
+      {post.data.tags && (
+        <div class="flex flex-wrap gap-2">
+          {post.data.tags.map(tag => (
+            <span class="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+      {post.data.title}
+    </h1>
+    {post.data.description && (
+      <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl">
+        {post.data.description}
+      </p>
+    )}
+  </div>
+</header>

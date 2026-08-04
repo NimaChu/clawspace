@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">
+  <rect width="200" height="120" fill="#3498db"/>
+  <text x="100" y="40" font-family="Arial" font-size="24" fill="white" text-anchor="middle">在线OCR工具</text>
+  <rect x="30" y="60" width="140" height="40" fill="none" stroke="white" stroke-width="3"/>
+  <line x1="30" y1="75" x2="170" y2="75" stroke="white" stroke-width="2"/>
+  <line x1="50" y1="85" x2="120" y2="85" stroke="white" stroke-width="1.5"/>
+  <line x1="50" y1="95" x2="150" y2="95" stroke="white" stroke-width="1.5"/>
+  <circle cx="180" cy="20" r="10" fill="#2ecc71"/>
+  <text x="180" y="25" font-family="Arial" font-size="12" fill="white" text-anchor="middle">AI</text>
+</svg>

@@ -1,0 +1,37 @@
+---
+// src/components/ui/Button.astro
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  class?: string;
+  children: AstroSlots;
+}
+
+const { href, variant = 'primary', size = 'md', class: className } = Astro.props;
+
+const baseStyles = 'inline-flex items-center justify-center rounded-xl font-medium transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2';
+const variants = {
+  primary: 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl focus:ring-blue-500',
+  secondary: 'bg-gray-800 dark:bg-gray-700 hover:bg-gray-900 dark:hover:bg-gray-600 text-white shadow-md hover:shadow-lg focus:ring-gray-500',
+  outline: 'border-2 border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 focus:ring-blue-500',
+  ghost: 'bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 focus:ring-gray-500'
+};
+const sizes = {
+  sm: 'px-4 py-2 text-sm',
+  md: 'px-6 py-3 text-base',
+  lg: 'px-8 py-4 text-lg'
+};
+
+const buttonStyles = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className || ''}`;
+---
+
+{href ? (
+  <a href={href} class={buttonStyles}>
+    <slot />
+  </a>
+) : (
+  <button class={buttonStyles}>
+    <slot />
+  </button>
+)}

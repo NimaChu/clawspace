@@ -1,0 +1,27 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="40" fill="#0B1020"/>
+  <rect x="52" y="52" width="1096" height="616" rx="32" fill="url(#paint0_linear)"/>
+  <circle cx="947" cy="189" r="126" fill="#38BDF8" fill-opacity="0.18"/>
+  <circle cx="259" cy="551" r="154" fill="#34D399" fill-opacity="0.14"/>
+  <rect x="118" y="136" width="348" height="50" rx="25" fill="#111827"/>
+  <text x="146" y="169" fill="#67E8F9" font-size="24" font-family="Arial, sans-serif">Packaged Static Frontend App</text>
+  <text x="118" y="272" fill="white" font-size="74" font-weight="700" font-family="Arial, sans-serif">Comeback</text>
+  <text x="118" y="334" fill="#CBD5E1" font-size="30" font-family="Arial, sans-serif">AI 嘴替生成器，支持一键封装与导入</text>
+  <rect x="118" y="410" width="214" height="64" rx="32" fill="#22D3EE"/>
+  <text x="162" y="451" fill="#0F172A" font-size="28" font-weight="700" font-family="Arial, sans-serif">Static App</text>
+  <rect x="352" y="410" width="204" height="64" rx="32" stroke="#67E8F9" stroke-width="2"/>
+  <text x="406" y="451" fill="#E2E8F0" font-size="28" font-weight="700" font-family="Arial, sans-serif">Auto Import</text>
+  <rect x="745" y="204" width="280" height="312" rx="28" fill="#0F172A" fill-opacity="0.82" stroke="#334155"/>
+  <rect x="777" y="248" width="216" height="44" rx="22" fill="#111827"/>
+  <rect x="777" y="316" width="104" height="36" rx="18" fill="#155E75"/>
+  <rect x="891" y="316" width="102" height="36" rx="18" fill="#1D4ED8"/>
+  <rect x="777" y="376" width="216" height="20" rx="10" fill="#334155"/>
+  <rect x="777" y="414" width="188" height="20" rx="10" fill="#334155"/>
+  <rect x="777" y="468" width="148" height="20" rx="10" fill="#22D3EE"/>
+  <defs>
+    <linearGradient id="paint0_linear" x1="96" y1="92" x2="1118" y2="656" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111827"/>
+      <stop offset="1" stop-color="#0F172A"/>
+    </linearGradient>
+  </defs>
+</svg>

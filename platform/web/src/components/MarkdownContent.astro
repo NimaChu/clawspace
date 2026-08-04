@@ -1,0 +1,8 @@
+---
+// src/components/MarkdownContent.astro
+// Renders Markdown content from Content Collections
+
+const { content } = Astro.props;
+---
+
+<div class="prose prose-invert prose-lg max-w-4xl mx-auto" innerHTML={{ __html: content }} />

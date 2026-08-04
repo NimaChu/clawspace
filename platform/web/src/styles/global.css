@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #3B82F6;
+    --color-primary-dark: #2563EB;
+    --color-secondary: #8B5CF6;
+    --color-success: #10B981;
+    --color-warning: #F59E0B;
+    --color-error: #EF4444;
+
+    /* Light mode */
+    --bg-color: #FFFFFF;
+    --text-color: #1F2937;
+    --text-secondary: #6B7280;
+    --border-color: #E5E7EB;
+    --card-bg: #FFFFFF;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .dark {
+    /* Dark mode */
+    --bg-color: #111827;
+    --text-color: #F9FAFB;
+    --text-secondary: #9CA3AF;
+    --border-color: #374151;
+    --card-bg: #1F2937;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  body {
+    @apply bg-[var(--bg-color)] text-[var(--text-color)] transition-colors duration-200;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl font-bold;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl font-semibold;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl font-semibold;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white font-medium py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white font-medium py-2 px-6 rounded-lg transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-[var(--card-bg)] rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-[var(--border-color)];
+  }
+
+  .nav-link {
+    @apply text-[var(--text-color)] hover:text-[var(--color-primary)] transition-colors duration-200;
+  }
+
+  .text-secondary {
+    @apply text-[var(--text-secondary)];
+  }
+}
+
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.stagger-item {
+  animation: fadeIn 0.3s ease-in-out;
+  opacity: 0;
+}
+
+.stagger-item.visible {
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scroll smooth */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Container max-width */
+.container {
+  @apply max-w-7xl mx-auto px-4;
+}
