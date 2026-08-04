@@ -5,7 +5,6 @@ This repository is a reproducible source snapshot, not a production data export.
 ## Included
 
 - platform and API source code
-- WeChat Mini Program source code
 - creator skill source code
 - example environment templates
 - local and container runtime instructions
@@ -19,6 +18,7 @@ This repository is a reproducible source snapshot, not a production data export.
 - real OAuth, model, database, object-storage, or WeChat credentials
 - generated packages and dependency directories
 - applications whose authors have not explicitly granted redistribution rights
+- CLAWSPACE Mini Program source code and its private project configuration
 
 ## Private source history
 

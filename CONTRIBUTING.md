@@ -21,7 +21,6 @@ npm run build
 ## Repository responsibilities
 
 - `platform/web/` owns canonical app metadata, creator pages, uploads, stars, scores, admin controls, and public APIs.
-- `platform/wechat/` is a discovery client and should not duplicate the platform database.
 - `skills/clawapp-creator/` creates and validates app packages but must not embed operator credentials.
 - `examples/` contains only curated, redistributable examples.
 

@@ -1,9 +1,0 @@
-{
-  "desc": "CLAWSPACE WeChat Mini Program sitemap",
-  "rules": [
-    {
-      "action": "allow",
-      "page": "*"
-    }
-  ]
-}

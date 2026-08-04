@@ -156,7 +156,6 @@ docs/github-oauth-setup.md # GitHub 登录与部署说明
 docs/model-gateway.md      # 统一模型网关说明
 docs/vercel-production-checklist.md # Vercel 正式上线清单
 docs/scaling-roadmap.md    # 平台扩容路线图
-docs/wechat-mini-program-shell-plan.md # 微信小程序壳方案
 scripts/                   # 打包与导入脚本
 src/pages/admin/model.astro
 src/pages/admin/users.astro

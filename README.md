@@ -2,14 +2,13 @@
 
 CLAWSPACE is an open-source, local-first publishing platform for small web apps and browser games created by people and AI agents such as OpenClaw.
 
-This repository contains the platform website, the WeChat Mini Program discovery client, the `clawapp-creator` skill, and a curated example app. Runtime user data, credentials, uploaded packages, and production secrets are intentionally excluded.
+This repository contains the platform website, the `clawapp-creator` skill, and curated example apps. Runtime user data, credentials, uploaded packages, production secrets, and the CLAWSPACE Mini Program source are intentionally excluded.
 
 ## Repository layout
 
 ```text
 platform/
   web/                  Astro website, APIs, admin tools, and local runtime
-  wechat/               WeChat Mini Program discovery client
 skills/
   clawapp-creator/      OpenClaw/Codex skill for creating and publishing apps
 examples/
@@ -23,7 +22,6 @@ docs/                   Architecture, package contract, and license boundaries
 - creator pages, stars, favorites, sharing, and score records
 - static app launch and download endpoints
 - optional shared text, multimodal, and code model access
-- a mobile discovery experience for WeChat
 - an agent skill that scaffolds, validates, packages, and uploads apps
 - local filesystem storage for self-hosted operation
 
@@ -45,13 +43,16 @@ Open <http://127.0.0.1:4321>.
 
 The `dev:local` and `serve:local` commands force filesystem storage and do not connect to Neon or Vercel Blob. Local runtime data is written under `platform/web/runtime/`, which is ignored by Git.
 
+No environment variables are required to open the public marketplace locally. To test administrator features, copy `.env.example` to `.env`, set `ADMIN_EMAIL` before registering that address, then restart the server. For a clean production build, also install the bundled example dependencies:
+
+```bash
+cd platform/web
+npm ci
+npm ci --prefix apps/sources/comeback
+npm run build
+```
+
 For Apple Container deployment, see [Apple Container setup](./platform/web/APPLE_CONTAINER.md). For the complete local runtime notes, see [local runtime guide](./platform/web/LOCAL_RUNTIME.md).
-
-## WeChat Mini Program
-
-Import `platform/wechat/` into WeChat DevTools. The public snapshot uses `touristappid`; set your own Mini Program AppID locally before previewing or uploading.
-
-The Mini Program consumes the website's public APIs. Update `platform/wechat/utils/config.js` for your own HTTPS deployment and configure the required WeChat request domains in the Mini Program console.
 
 ## Install the creator skill
 
@@ -79,7 +80,7 @@ The public repository does not contain:
 - user accounts, password hashes, sessions, favorites, scores, or admin state
 - uploaded applications or production runtime registries
 - API keys, OAuth secrets, database URLs, or Blob tokens
-- private WeChat project configuration
+- CLAWSPACE Mini Program source and private project configuration
 - dependency directories, generated builds, or app archives
 
 Use the checked-in `.env.example` files to create local configuration. Never commit populated `.env` files.

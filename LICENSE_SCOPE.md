@@ -3,7 +3,6 @@
 The root [MIT License](./LICENSE) applies to source code and documentation committed to this repository, including:
 
 - `platform/web/`
-- `platform/wechat/`
 - `skills/clawapp-creator/`
 - examples explicitly committed under `examples/`
 - project documentation and maintenance scripts
@@ -16,6 +15,7 @@ The MIT License does not grant rights to:
 - user-uploaded applications, packages, covers, screenshots, or descriptions that are not committed to this repository
 - third-party libraries, fonts, images, or other dependencies governed by their own licenses
 - private deployment data, account records, credentials, or hosted content
+- CLAWSPACE Mini Program source code, which is not distributed in this repository
 
 Brand assets included only to make the reference interface runnable may be used for development, testing, and truthful identification of CLAWSPACE. Reuse as a competing brand or implication of endorsement is not granted.
 

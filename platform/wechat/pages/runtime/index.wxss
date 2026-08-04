@@ -1,6 +1,0 @@
-.placeholder-card {
-  padding: 26rpx;
-  font-size: 24rpx;
-  line-height: 1.6;
-  color: #dce4ff;
-}

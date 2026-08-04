@@ -15,7 +15,7 @@ CLAWSPACE supports local runtime storage. Treat the following as private and kee
 - account exports and password hashes
 - OAuth credentials and model API keys
 - database URLs and object-storage tokens
-- WeChat private project configuration
+- private client project configuration
 
 If a secret is committed, revoke or rotate it before removing it from Git history. Deleting the visible line alone is not sufficient.
 

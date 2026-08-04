@@ -1,8 +1,0 @@
-.DS_Store
-node_modules/
-dist/
-miniprogram_npm/
-project.private.config.json
-*.log
-
-project.private.config.json
