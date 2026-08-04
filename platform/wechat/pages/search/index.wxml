@@ -1,0 +1,49 @@
+<view class="page-shell search-page">
+  <view class="glass-card search-hero subtle-grid">
+    <view class="section-kicker">FIND SIGNALS</view>
+    <view class="section-title">搜索应用</view>
+    <view class="muted search-hero-copy">按名称、关键词或应用类型，快速找到想在微信里体验的作品。</view>
+
+    <view class="search-shell">
+      <input
+        class="search-input"
+        placeholder="搜索应用、小游戏、OCR 工具..."
+        value="{{query}}"
+        bindinput="updateQuery"
+        confirm-type="search"
+        bindconfirm="onConfirmSearch"
+      />
+      <view class="primary-button search-action" bindtap="onConfirmSearch">搜索</view>
+    </view>
+  </view>
+
+  <view wx:if="{{!searched && !loading}}" class="search-suggestions">
+    <view class="pill tag-pill" data-query="game" bindtap="useSuggestedQuery">game</view>
+    <view class="pill tag-pill" data-query="ocr" bindtap="useSuggestedQuery">ocr</view>
+    <view class="pill tag-pill" data-query="space" bindtap="useSuggestedQuery">space</view>
+    <view class="pill tag-pill" data-query="ai" bindtap="useSuggestedQuery">ai</view>
+  </view>
+
+  <view wx:if="{{error}}" class="glass-card placeholder-card">
+    {{error}}
+  </view>
+
+  <view wx:if="{{items.length}}" class="result-list">
+    <view wx:for="{{items}}" wx:key="slug" class="glass-card result-card" data-slug="{{item.slug}}" bindtap="openAppDetail">
+      <view class="result-header">
+        <view class="result-name">{{item.name}}</view>
+        <view class="signal-chip result-pill">{{item.wechatSupport}}</view>
+      </view>
+      <view class="muted result-description">{{item.description}}</view>
+      <view class="muted result-meta">{{item.authorName}} · {{item.starCount}} 星标</view>
+    </view>
+  </view>
+
+  <view wx:elif="{{loading}}" class="glass-card placeholder-card">
+    正在搜索...
+  </view>
+
+  <view wx:elif="{{searched}}" class="glass-card placeholder-card">
+    没有搜索到相关应用。
+  </view>
+</view>

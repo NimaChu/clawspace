@@ -1,1 +1,35 @@
 .DS_Store
+**/.DS_Store
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+!.env.container.example
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.container.example
+**/project.private.config.json
+**/upload-config.local.json
+
+# Dependencies and build output
+**/node_modules/
+**/dist/
+**/.astro/
+**/.vercel/
+**/__pycache__/
+**/*.pyc
+
+# Local platform state and user content
+platform/web/runtime/
+**/accounts.json
+**/test-accounts.json
+**/apps-registry.json
+platform/web/public/hosted-apps/
+**/uploads/
+
+# Generated packages and logs
+**/*.zip
+**/*.tar.gz
+**/*.log

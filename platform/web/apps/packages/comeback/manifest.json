@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "comeback-project",
+  "slug": "comeback-project",
+  "name": "AI 嘴替生成器 - Comeback",
+  "description": "智能话术助手，帮你生成更自然的高情商回复和神评论。",
+  "version": "0.2.0",
+  "category": "AI 工具",
+  "runtime": "static-front-end",
+  "modelCategory": "text",
+  "entry": "app/index.html",
+  "stars": 128,
+  "tags": ["AI", "React", "Vite", "TypeScript"],
+  "author": {
+    "name": "Nima Chu",
+    "url": "https://github.com/NimaChu"
+  },
+  "links": {
+    "github": "https://github.com/NimaChu",
+    "homepage": "https://github.com/NimaChu"
+  },
+  "thumbnail": "assets/comeback-thumb.svg",
+  "thumbnailMobile": "assets/thumbnail.png",
+  "icon": "assets/icon.png",
+  "screenshots": ["assets/comeback-thumb.svg"],
+  "features": [
+    "基于上下文生成高情商回复",
+    "支持多场景话术生成",
+    "可切换温柔、犀利、高情商、幽默等风格",
+    "移动端优先，适合快速使用"
+  ],
+  "techStack": ["React", "Vite", "Platform LLM API", "CSS"],
+  "usageSteps": [
+    "选择场景和风格",
+    "输入原始消息或你想表达的内容",
+    "一键生成可直接使用的回复",
+    "复制结果并发送"
+  ]
+}

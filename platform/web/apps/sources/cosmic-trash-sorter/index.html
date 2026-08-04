@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cosmic Trash Sorter</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hud">
+        <p class="eyebrow">Space Cleanup Mission</p>
+        <h1>Cosmic Trash Sorter</h1>
+        <p class="subtitle">在太空中收集垃圾并正确分类，保护宇宙环境！</p>
+        <div class="stats">
+          <div class="stat-card">
+            <span>得分</span>
+            <strong id="score">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>时间</span>
+            <strong id="time">60</strong>
+          </div>
+          <div class="stat-card">
+            <span>生命值</span>
+            <strong id="lives">3</strong>
+          </div>
+        </div>
+        <div class="sorting-indicator">
+          <p>当前分类: <span id="current-category">塑料</span></p>
+          <div class="categories">
+            <div class="category plastic active" data-type="plastic">塑料</div>
+            <div class="category metal" data-type="metal">金属</div>
+            <div class="category organic" data-type="organic">有机物</div>
+            <div class="category toxic" data-type="toxic">有害物质</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="start-button">开始游戏</button>
+          <button id="reset-button" class="ghost">重新开始</button>
+        </div>
+      </section>
+
+      <section class="game-board">
+        <div class="spaceship" id="spaceship">🚀</div>
+        <div class="trash-container" id="trash-container"></div>
+        <div class="collect-effect" id="collect-effect"></div>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

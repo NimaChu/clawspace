@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "my-mini-game",
+  "slug": "my-mini-game",
+  "name": "My Mini Game",
+  "description": "一句话介绍你的应用或小游戏。",
+  "version": "1.0.0",
+  "category": "小游戏",
+  "runtime": "static-front-end",
+  "modelCategory": "none",
+  "entry": "app/index.html",
+  "featured": false,
+  "stars": 0,
+  "tags": ["Game", "HTML5"],
+  "author": {
+    "name": "Your Name",
+    "url": ""
+  },
+  "links": {
+    "github": "",
+    "homepage": ""
+  },
+  "thumbnail": "assets/thumbnail.png",
+  "icon": "assets/icon.png",
+  "screenshots": ["assets/thumbnail.png"],
+  "features": [
+    "写一个亮点"
+  ],
+  "techStack": [
+    "HTML",
+    "CSS",
+    "JavaScript"
+  ],
+  "usageSteps": [
+    "打开应用",
+    "开始体验"
+  ]
+}

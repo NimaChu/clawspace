@@ -1,0 +1,51 @@
+{
+  "name": "nima-site",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "dev:local": "node ./scripts/build-skill-download.mjs && DATABASE_URL= BLOB_READ_WRITE_TOKEN= OBJECT_STORAGE_PROVIDER=filesystem SITE_URL=http://127.0.0.1:4321 astro dev",
+    "start": "astro dev",
+    "serve": "node ./dist/server/entry.mjs",
+    "serve:local": "DATABASE_URL= BLOB_READ_WRITE_TOKEN= OBJECT_STORAGE_PROVIDER=filesystem SITE_URL=http://127.0.0.1:4321 ALLOW_UNSAFE_SAME_ORIGIN_APPS=true node ./dist/server/entry.mjs",
+    "container:build": "./scripts/apple-container.sh build",
+    "container:start": "./scripts/apple-container.sh start",
+    "container:restart": "./scripts/apple-container.sh restart",
+    "container:stop": "./scripts/apple-container.sh stop",
+    "container:status": "./scripts/apple-container.sh status",
+    "container:logs": "./scripts/apple-container.sh logs",
+    "build:comeback": "cd apps/sources/comeback && npm run build",
+    "package:comeback": "npm run build:comeback && node ./scripts/build-app-package.mjs ./apps/packages/comeback ./apps/sources/comeback/dist ./apps/zips/comeback-project.zip",
+    "import:package": "node ./scripts/import-app-package.mjs",
+    "migrate:runtime": "node ./scripts/migrate-runtime-to-local.mjs",
+    "seed:comeback": "npm run package:comeback && npm run import:package -- ./apps/zips/comeback-project.zip",
+    "build": "npm run clean && node ./scripts/build-skill-download.mjs && npm run build:comeback && astro build",
+    "preview": "node ./dist/server/entry.mjs",
+    "astro": "astro",
+    "clean": "rm -rf dist .astro",
+    "clean:comeback": "rm -rf apps/sources/comeback/dist",
+    "reinstall": "rm -rf node_modules package-lock.json && npm install"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.0.3",
+    "@vercel/blob": "^2.3.1",
+    "astro": "^7.1.6",
+    "axios": "^1.3.4",
+    "bcryptjs": "^3.0.3",
+    "canvas": "^3.2.1",
+    "cookie": "^1.1.1",
+    "dotenv": "^17.3.1",
+    "jszip": "^3.10.1",
+    "pg": "^8.20.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19"
+  }
+}

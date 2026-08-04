@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 蓝色到紫色的渐变 -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a" />
+      <stop offset="50%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+
+    <!-- 抽象形状的样式 -->
+    <pattern id="codePattern" patternUnits="userSpaceOnUse" width="20" height="20">
+      <path d="M0,0 L20,20 M20,0 L0,20" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1920" height="1080" fill="url(#bgGradient)" />
+
+  <!-- 抽象的数据流和网络连接 -->
+  <!-- 左侧数据流 -->
+  <path d="M 200 300 Q 400 200 600 300 T 1000 300" stroke="rgba(255, 255, 255, 0.2)" stroke-width="2" fill="none" />
+  <path d="M 250 400 Q 450 300 650 400 T 1050 400" stroke="rgba(255, 255, 255, 0.15)" stroke-width="2" fill="none" />
+  <path d="M 300 500 Q 500 400 700 500 T 1100 500" stroke="rgba(255, 255, 255, 0.1)" stroke-width="2" fill="none" />
+
+  <!-- 右侧数据流 -->
+  <path d="M 1700 300 Q 1500 200 1300 300 T 900 300" stroke="rgba(255, 255, 255, 0.2)" stroke-width="2" fill="none" />
+  <path d="M 1650 400 Q 1450 300 1250 400 T 850 400" stroke="rgba(255, 255, 255, 0.15)" stroke-width="2" fill="none" />
+  <path d="M 1600 500 Q 1400 400 1200 500 T 800 500" stroke="rgba(255, 255, 255, 0.1)" stroke-width="2" fill="none" />
+
+  <!-- 网络连接点 -->
+  <circle cx="600" cy="300" r="8" fill="#ffffff" opacity="0.3" />
+  <circle cx="800" cy="300" r="8" fill="#ffffff" opacity="0.3" />
+  <circle cx="1000" cy="300" r="8" fill="#ffffff" opacity="0.3" />
+  <circle cx="700" cy="400" r="6" fill="#ffffff" opacity="0.2" />
+  <circle cx="900" cy="400" r="6" fill="#ffffff" opacity="0.2" />
+  <circle cx="800" cy="500" r="5" fill="#ffffff" opacity="0.15" />
+
+  <!-- 抽象的二进制数据流（使用小方块代替文字） -->
+  <g opacity="0.1">
+    <rect x="750" y="880" width="10" height="10" fill="white" />
+    <rect x="770" y="880" width="5" height="10" fill="white" />
+    <rect x="790" y="880" width="10" height="10" fill="white" />
+    <rect x="810" y="880" width="5" height="10" fill="white" />
+    <rect x="830" y="880" width="10" height="10" fill="white" />
+    <rect x="850" y="880" width="5" height="10" fill="white" />
+    <rect x="870" y="880" width="10" height="10" fill="white" />
+    <rect x="890" y="880" width="5" height="10" fill="white" />
+
+    <rect x="760" y="910" width="5" height="10" fill="white" />
+    <rect x="780" y="910" width="10" height="10" fill="white" />
+    <rect x="800" y="910" width="5" height="10" fill="white" />
+    <rect x="820" y="910" width="10" height="10" fill="white" />
+    <rect x="840" y="910" width="5" height="10" fill="white" />
+    <rect x="860" y="910" width="10" height="10" fill="white" />
+    <rect x="880" y="910" width="5" height="10" fill="white" />
+    <rect x="900" y="910" width="10" height="10" fill="white" />
+  </g>
+
+  <!-- 装饰性元素 -->
+  <circle cx="1800" cy="200" r="50" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="2" />
+  <circle cx="100" cy="200" r="30" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="2" />
+  <rect x="1750" y="150" width="100" height="100" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1" transform="rotate(45 1800 200)" />
+
+  <!-- 抽象的电路板图案 -->
+  <g opacity="0.05">
+    <rect x="400" y="600" width="200" height="200" fill="url(#codePattern)" />
+    <rect x="1300" y="600" width="200" height="200" fill="url(#codePattern)" />
+  </g>
+</svg>

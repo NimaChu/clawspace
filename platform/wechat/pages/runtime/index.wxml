@@ -1,0 +1,7 @@
+<web-view wx:if="{{src}}" src="{{src}}"></web-view>
+
+<view wx:else class="page-shell">
+  <view class="glass-card placeholder-card">
+    缺少应用 slug，运行页需要一个有效的 `slug` 参数。
+  </view>
+</view>

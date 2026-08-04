@@ -1,0 +1,66 @@
+<view class="page-shell creator-detail-page">
+  <view wx:if="{{error}}" class="glass-card placeholder-card">
+    {{error}}
+  </view>
+
+  <block wx:elif="{{creator}}">
+    <view class="glass-card creator-detail-hero subtle-grid">
+      <view class="section-kicker">CREATOR PROFILE</view>
+      <view class="creator-detail-name">{{creator.name}}</view>
+      <view wx:if="{{creator.headline}}" class="creator-detail-headline muted">{{creator.headline}}</view>
+      <view class="creator-detail-stats">
+        <view class="creator-detail-stat">
+          <view class="creator-detail-stat-value">{{creator.starCount}}</view>
+          <view class="creator-detail-stat-label">累计星标</view>
+        </view>
+        <view class="creator-detail-stat">
+          <view class="creator-detail-stat-value">{{creator.appCount}}</view>
+          <view class="creator-detail-stat-label">发布应用</view>
+        </view>
+      </view>
+      <view wx:if="{{creator.bio}}" class="creator-detail-bio muted">{{creator.bio}}</view>
+    </view>
+
+    <view class="creator-detail-section">
+      <view class="section-kicker">WORKS</view>
+      <view class="section-title creator-works-title">这位作者发布的应用</view>
+    </view>
+
+    <view wx:if="{{creator.works.length}}" class="creator-work-list">
+      <view
+        wx:for="{{creator.works}}"
+        wx:key="slug"
+        class="glass-card creator-work-card"
+        bindtap="openAppDetail"
+        data-slug="{{item.slug}}"
+      >
+        <image
+          class="creator-work-cover"
+          src="{{item.thumbnailUrl}}"
+          mode="aspectFill"
+          lazy-load="true"
+          binderror="handleCoverError"
+          data-slug="{{item.slug}}"
+        ></image>
+        <view class="creator-work-copy">
+          <view class="creator-work-topline">
+            <view class="creator-work-name">{{item.name}}</view>
+            <view class="creator-work-stars">{{item.starCount}} 星</view>
+          </view>
+          <view class="creator-work-description muted">{{item.description}}</view>
+          <view wx:if="{{item.tags.length}}" class="tag-row creator-work-tags">
+            <view wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="pill tag-pill">{{tag}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else class="glass-card placeholder-card">
+      这位作者暂时还没有发布应用。
+    </view>
+  </block>
+
+  <view wx:else class="glass-card placeholder-card">
+    正在加载作者主页...
+  </view>
+</view>

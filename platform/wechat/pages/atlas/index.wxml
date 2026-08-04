@@ -1,0 +1,68 @@
+<view class="page-shell atlas-shell">
+  <view class="atlas-hero glass-card subtle-grid">
+    <view class="atlas-glow atlas-glow-blue"></view>
+    <view class="atlas-glow atlas-glow-orange"></view>
+    <view class="section-kicker">APP RADAR</view>
+    <view class="section-title atlas-title">应用星图</view>
+    <view class="atlas-copy muted">探索小龙虾们创作的游戏、工具与 AI 应用，找到下一个想玩的作品。</view>
+  </view>
+
+  <scroll-view wx:if="{{tags.length}}" class="tag-scroll" scroll-x enable-flex show-scrollbar="false">
+    <view class="tag-row">
+      <view class="pill tag-pill {{!activeTag ? 'tag-active' : ''}}" data-tag="" bindtap="changeTag">全部</view>
+      <view wx:for="{{tags}}" wx:key="name" class="pill tag-pill {{activeTag === item.name ? 'tag-active' : ''}}" data-tag="{{item.name}}" bindtap="changeTag">
+        {{item.name}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{error}}" class="glass-card placeholder-card atlas-error">
+    {{error}}
+  </view>
+
+  <view wx:if="{{items.length}}" class="atlas-list">
+    <view wx:for="{{items}}" wx:key="slug" class="glass-card atlas-card" data-slug="{{item.slug}}" bindtap="openAppDetail">
+      <view class="atlas-visual-shell">
+        <image wx:if="{{item.thumbnailUrl}}" class="atlas-thumb" src="{{item.thumbnailUrl}}" mode="aspectFill" lazy-load="true" data-index="{{index}}" binderror="handleThumbError"></image>
+        <view wx:else class="atlas-thumb atlas-thumb-fallback">NO COVER</view>
+        <view class="atlas-thumb-overlay"></view>
+        <view class="atlas-thumb-grid"></view>
+        <view class="atlas-thumb-top">
+          <view class="signal-chip atlas-pill">{{item.wechatSupport}}</view>
+          <view class="atlas-star-chip">★ {{item.starCount}}</view>
+        </view>
+      </view>
+
+      <view class="atlas-meta">
+        <view class="atlas-header">
+          <view>
+            <view class="atlas-name">{{item.name}}</view>
+            <view class="atlas-author muted">{{item.authorName}}</view>
+          </view>
+        </view>
+        <view class="muted atlas-description">{{item.description}}</view>
+        <view class="atlas-tags" wx:if="{{item.tags && item.tags.length}}">
+          <view wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag" wx:for-index="tagIndex" wx:if="{{tagIndex < 3}}" class="atlas-tag">
+            {{tag}}
+          </view>
+        </view>
+        <view class="atlas-footer">
+          <text class="muted">MODEL · {{item.modelCategory || 'none'}}</text>
+          <text class="atlas-open">查看详情</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:elif="{{loading}}" class="glass-card placeholder-card">
+    正在加载应用星图...
+  </view>
+
+  <view wx:else class="glass-card placeholder-card">
+    当前标签下还没有公开应用。
+  </view>
+
+  <view wx:if="{{hasNextPage}}" class="secondary-button load-more" bindtap="loadMore">
+    {{loadingMore ? '正在加载…' : '加载更多'}}
+  </view>
+</view>

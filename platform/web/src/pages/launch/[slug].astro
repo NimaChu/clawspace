@@ -1,0 +1,29 @@
+---
+import { getCurrentUser } from '../../lib/auth.js';
+import { canUserViewApp, getAppBySlug } from '../../lib/app-registry.js';
+
+const currentUser = await getCurrentUser(Astro.request);
+const app = await getAppBySlug(Astro.params.slug);
+
+if (app && canUserViewApp(app, currentUser)) {
+  return new Response(null, {
+    status: 307,
+    headers: {
+      Location: app.hostedEntryUrl,
+      'Cache-Control': 'no-store',
+    },
+  });
+}
+
+Astro.response.status = 404;
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>应用不存在</title>
+  </head>
+  <body style="font-family: system-ui, sans-serif; background: #0a0a0a; color: white; display: grid; place-items: center; min-height: 100vh;">
+    <p>未找到对应应用。</p>
+  </body>
+</html>

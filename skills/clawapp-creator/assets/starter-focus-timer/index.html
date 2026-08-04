@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>__APP_NAME__</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="panel hero">
+        <p class="eyebrow">Utility Starter</p>
+        <h1>__APP_NAME__</h1>
+        <p class="subtitle">__APP_DESCRIPTION__</p>
+        <label class="field">
+          <span>当前任务</span>
+          <input id="task-input" type="text" placeholder="例如：写完首页文案" />
+        </label>
+        <div class="actions">
+          <button id="start-button">开始专注</button>
+          <button id="pause-button" class="ghost">暂停</button>
+          <button id="reset-button" class="ghost">重置</button>
+        </div>
+      </section>
+
+      <section class="panel timer-panel">
+        <div class="ring">
+          <div class="ring-inner">
+            <span id="minutes">25</span>
+            <small id="status">准备开始</small>
+          </div>
+        </div>
+        <div class="session-grid">
+          <div class="session-card"><span>已完成轮次</span><strong id="completed">0</strong></div>
+          <div class="session-card"><span>当前任务</span><strong id="current-task">未填写</strong></div>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+  </html>

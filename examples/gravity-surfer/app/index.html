@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>引力波冲浪 · Gravity Surfer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    touch-action: none;
+  }
+
+  canvas {
+    display: block;
+    position: absolute;
+    top: 0; left: 0;
+  }
+
+  #ui {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .score-block {
+    text-align: left;
+  }
+
+  .score-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(0,255,200,0.5);
+    text-transform: uppercase;
+  }
+
+  .score-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #00ffc8;
+    text-shadow: 0 0 20px #00ffc8, 0 0 40px #00ffc880;
+    line-height: 1;
+  }
+
+  .score-meta {
+    margin-top: 8px;
+    display: grid;
+    gap: 4px;
+  }
+
+  .score-meta-line {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.64);
+    line-height: 1.4;
+  }
+
+  .score-meta-line strong {
+    color: #e8fffb;
+    font-weight: 700;
+  }
+
+  .combo-block {
+    text-align: right;
+  }
+
+  .combo-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(255,100,200,0.5);
+    text-transform: uppercase;
+  }
+
+  .combo-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff64c8;
+    text-shadow: 0 0 20px #ff64c8;
+    line-height: 1;
+    transition: transform 0.1s;
+  }
+
+  .combo-value.pulse {
+    transform: scale(1.4);
+  }
+
+  #overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(4px);
+  }
+
+  #overlay h1 {
+    font-size: clamp(28px, 6vw, 52px);
+    color: #00ffc8;
+    text-shadow: 0 0 30px #00ffc8, 0 0 60px #00ffc860;
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+  }
+
+  #overlay .subtitle {
+    font-size: clamp(12px, 2.5vw, 16px);
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+  }
+
+  #overlay .instructions {
+    font-size: clamp(12px, 2vw, 14px);
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    line-height: 2;
+    margin-bottom: 40px;
+    max-width: 400px;
+  }
+
+  #overlay .instructions span {
+    color: #00ffc8;
+    font-weight: bold;
+  }
+
+  #overlay .instructions .warn {
+    color: #ff6464;
+  }
+
+  #start-btn {
+    background: transparent;
+    border: 2px solid #00ffc8;
+    color: #00ffc8;
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    letter-spacing: 4px;
+    padding: 14px 40px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    box-shadow: 0 0 20px #00ffc840;
+  }
+
+  #start-btn:hover {
+    background: #00ffc820;
+    box-shadow: 0 0 40px #00ffc8;
+    transform: scale(1.05);
+  }
+
+  #final-score {
+    font-size: clamp(14px, 3vw, 20px);
+    color: #ff64c8;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+
+  #best-score {
+    font-size: clamp(11px, 2vw, 14px);
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 6px;
+    letter-spacing: 2px;
+  }
+
+  #global-best-score {
+    font-size: clamp(11px, 2vw, 14px);
+    color: rgba(0,255,200,0.72);
+    margin-bottom: 32px;
+    letter-spacing: 2px;
+  }
+
+  #wave-indicator {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .wave-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.15s;
+  }
+
+  .wave-dot.active {
+    background: #00ffc8;
+    box-shadow: 0 0 10px #00ffc8;
+    transform: scale(1.5);
+  }
+
+  #danger-flash {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 15;
+    opacity: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, #ff000040 100%);
+    transition: opacity 0.1s;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<canvas id="game"></canvas>
+
+<div id="ui">
+  <div class="score-block">
+    <div class="score-label">Score</div>
+    <div class="score-value" id="score-display">0</div>
+    <div class="score-meta">
+      <div class="score-meta-line" id="personal-best-inline">个人最高：<strong>0</strong></div>
+      <div class="score-meta-line" id="global-best-inline">全站最高：<strong>0</strong></div>
+    </div>
+  </div>
+  <div class="combo-block">
+    <div class="combo-label">Combo</div>
+    <div class="combo-value" id="combo-display">×1</div>
+  </div>
+</div>
+
+<div id="wave-indicator">
+  <div class="wave-dot" id="dot0"></div>
+  <div class="wave-dot" id="dot1"></div>
+  <div class="wave-dot" id="dot2"></div>
+  <div class="wave-dot" id="dot3"></div>
+  <div class="wave-dot" id="dot4"></div>
+  <div class="wave-dot" id="dot5"></div>
+  <div class="wave-dot" id="dot6"></div>
+  <div class="wave-dot" id="dot7"></div>
+</div>
+
+<div id="danger-flash"></div>
+
+<div id="overlay">
+  <h1>引力波冲浪</h1>
+  <div class="subtitle">GRAVITY SURFER</div>
+  <div class="instructions">
+    在脉冲引力波上驾驭粒子<br>
+    <span>点击 / 空格</span> 在波峰跳跃<br>
+    收集 <span>能量晶体</span> 获得分数<br>
+    <span class="warn">碰到波谷尖刺</span> 游戏结束<br>
+    连续收集提升 <span>连击倍率</span>
+  </div>
+  <div id="final-score" style="display:none"></div>
+  <div id="best-score" style="display:none"></div>
+  <div id="global-best-score" style="display:none"></div>
+  <button id="start-btn">开始冲浪</button>
+</div>
+
+<script type="module">
+import { createGameStorage } from './lib/clawspace-game-storage.js';
+
+// ─── Canvas Setup ───────────────────────────────────────────────────────────
+const bgCanvas = document.getElementById('bg');
+const bgCtx = bgCanvas.getContext('2d');
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+let W, H;
+function resize() {
+  W = bgCanvas.width = canvas.width = window.innerWidth;
+  H = bgCanvas.height = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ─── Game State ─────────────────────────────────────────────────────────────
+let state = 'idle'; // idle | playing | dead
+let score = 0;
+const gameStorage = createGameStorage('gravity-surfer');
+const legacyBestScore = parseInt(window.localStorage.getItem('gs_best') || '0', 10) || 0;
+let bestScore = Math.max(gameStorage.getNumber('best-score', 0), legacyBestScore);
+if (bestScore > 0) {
+  gameStorage.setNumber('best-score', bestScore);
+}
+let globalBestScore = 0;
+let remoteScoreState = {
+  authenticated: false,
+  userBest: null,
+  globalBest: null,
+};
+let combo = 1;
+let comboTimer = 0;
+let gameTime = 0;
+let speed = 2.5;
+
+// ─── Wave System ────────────────────────────────────────────────────────────
+// The wave is a scrolling sine-based terrain
+// wavePhase drives the scroll; wavePoints is a cached array of y-values
+const WAVE_SEGS = 200;
+let wavePhase = 0;
+let waveAmplitude = 0.22; // fraction of H
+let waveFreq = 0.018;
+let wavePulse = 0; // 0..1 beat pulse
+let beatInterval = 60; // frames between beats
+let beatTimer = 0;
+let beatCount = 0;
+
+// Spikes: appear at wave troughs on beat
+let spikes = [];
+// Crystals: appear at wave crests
+let crystals = [];
+// Particles: visual effects
+let particles = [];
+// Stars: background
+let stars = [];
+
+function formatScoreText(value) {
+  return Number.isFinite(Number(value)) ? String(Number(value)) : '0';
+}
+
+function renderScoreMeta() {
+  const personalNode = document.getElementById('personal-best-inline');
+  const globalNode = document.getElementById('global-best-inline');
+  const personalLabel = remoteScoreState.authenticated ? '账号最高' : '本地最高';
+  personalNode.innerHTML = `${personalLabel}：<strong>${formatScoreText(bestScore)}</strong>`;
+  globalNode.innerHTML = `全站最高：<strong>${formatScoreText(globalBestScore)}</strong>`;
+}
+
+async function refreshRemoteScoreSummary() {
+  const summary = await gameStorage.fetchRemoteSummary('best-score', 0);
+  remoteScoreState = summary;
+  if (summary.authenticated && summary.userBest?.score != null) {
+    bestScore = Math.max(bestScore, Number(summary.userBest.score) || 0);
+    gameStorage.setNumber('best-score', bestScore);
+  }
+  if (summary.globalBest?.score != null) {
+    globalBestScore = Number(summary.globalBest.score) || 0;
+  } else {
+    globalBestScore = Math.max(globalBestScore, bestScore);
+  }
+  renderScoreMeta();
+}
+
+// ─── Player ─────────────────────────────────────────────────────────────────
+const PLAYER_X_FRAC = 0.22;
+let player = {
+  x: 0, y: 0,
+  vy: 0,
+  onWave: true,
+  jumpCooldown: 0,
+  trail: [],
+  glow: 0,
+  dead: false,
+  deathTimer: 0,
+};
+
+// ─── Init Stars ─────────────────────────────────────────────────────────────
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 120; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.5 + 0.3,
+      speed: Math.random() * 0.4 + 0.1,
+      alpha: Math.random() * 0.6 + 0.2,
+    });
+  }
+}
+
+// ─── Wave Y at X ────────────────────────────────────────────────────────────
+function waveY(x) {
+  const phase = wavePhase + x * waveFreq;
+  const base = Math.sin(phase) * 0.7 + Math.sin(phase * 1.618) * 0.3;
+  const amp = waveAmplitude * H;
+  return H * 0.5 + base * amp;
+}
+
+function waveSlope(x) {
+  return (waveY(x + 1) - waveY(x - 1)) / 2;
+}
+
+// ─── Spawn Crystal ──────────────────────────────────────────────────────────
+function spawnCrystal() {
+  // Find a crest ahead of player
+  const startX = W * 0.5;
+  const endX = W * 1.1;
+  let bestX = startX + Math.random() * (endX - startX);
+  let bestY = waveY(bestX) - 30;
+  crystals.push({
+    x: bestX,
+    y: bestY,
+    baseY: bestY,
+    r: 10,
+    angle: Math.random() * Math.PI * 2,
+    collected: false,
+    alpha: 1,
+    hue: Math.random() * 60 + 160, // cyan-green range
+  });
+}
+
+// ─── Spawn Spike ────────────────────────────────────────────────────────────
+function spawnSpike() {
+  const x = W * 0.7 + Math.random() * W * 0.5;
+  const y = waveY(x);
+  spikes.push({
+    x, y,
+    baseY: y,
+    height: 18 + Math.random() * 12,
+    alpha: 1,
+    collected: false,
+  });
+}
+
+// ─── Particle Burst ─────────────────────────────────────────────────────────
+function burst(x, y, color, count = 12) {
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+    const speed = 2 + Math.random() * 4;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 2,
+      life: 1,
+      decay: 0.03 + Math.random() * 0.03,
+      r: 2 + Math.random() * 3,
+      color,
+    });
+  }
+}
+
+// ─── Reset Game ─────────────────────────────────────────────────────────────
+function resetGame() {
+  score = 0;
+  combo = 1;
+  comboTimer = 0;
+  gameTime = 0;
+  speed = 2.5;
+  wavePhase = 0;
+  beatTimer = 0;
+  beatCount = 0;
+  wavePulse = 0;
+  spikes = [];
+  crystals = [];
+  particles = [];
+
+  player.x = W * PLAYER_X_FRAC;
+  player.y = waveY(player.x);
+  player.vy = 0;
+  player.onWave = true;
+  player.jumpCooldown = 0;
+  player.trail = [];
+  player.glow = 0;
+  player.dead = false;
+  player.deathTimer = 0;
+
+  document.getElementById('score-display').textContent = '0';
+  document.getElementById('combo-display').textContent = '×1';
+  renderScoreMeta();
+
+  // Spawn initial crystals
+  for (let i = 0; i < 3; i++) spawnCrystal();
+}
+
+// ─── Input ──────────────────────────────────────────────────────────────────
+let jumpPressed = false;
+
+function doJump() {
+  if (state !== 'playing') return;
+  if (player.dead) return;
+  if (player.jumpCooldown > 0) return;
+  // Jump from wave surface
+  player.vy = -10;
+  player.onWave = false;
+  player.jumpCooldown = 15;
+  player.glow = 1;
+  burst(player.x, player.y, '#00ffc8', 8);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' || e.code === 'ArrowUp') {
+    e.preventDefault();
+    if (state === 'idle') return;
+    doJump();
+  }
+});
+
+canvas.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  if (state === 'idle') return;
+  doJump();
+});
+
+document.getElementById('start-btn').addEventListener('click', () => {
+  document.getElementById('overlay').style.display = 'none';
+  initStars();
+  resetGame();
+  state = 'playing';
+});
+
+// ─── Update ─────────────────────────────────────────────────────────────────
+function update() {
+  if (state !== 'playing') return;
+  if (player.dead) {
+    player.deathTimer++;
+    if (player.deathTimer > 90) showGameOver();
+    return;
+  }
+
+  gameTime++;
+  speed = 2.5 + gameTime * 0.0008;
+  waveAmplitude = Math.min(0.30, 0.22 + gameTime * 0.00003);
+  beatInterval = Math.max(35, 60 - gameTime * 0.01);
+
+  // Beat pulse
+  beatTimer++;
+  if (beatTimer >= beatInterval) {
+    beatTimer = 0;
+    beatCount++;
+    wavePulse = 1;
+    // Spawn spike on beat
+    if (beatCount % 2 === 0) spawnSpike();
+    // Spawn crystal occasionally
+    if (crystals.filter(c => !c.collected).length < 4) spawnCrystal();
+  }
+  wavePulse *= 0.85;
+
+  // Scroll wave
+  wavePhase += speed * waveFreq * 1.2;
+
+  // Player physics
+  player.x = W * PLAYER_X_FRAC;
+  const surfaceY = waveY(player.x);
+
+  if (player.onWave) {
+    player.y = surfaceY;
+    player.vy = 0;
+  } else {
+    player.vy += 0.45; // gravity
+    player.y += player.vy;
+    if (player.y >= surfaceY) {
+      player.y = surfaceY;
+      player.vy = 0;
+      player.onWave = true;
+      burst(player.x, player.y, '#00ffc840', 5);
+    }
+  }
+
+  if (player.jumpCooldown > 0) player.jumpCooldown--;
+
+  // Trail
+  player.trail.push({ x: player.x, y: player.y, alpha: 1 });
+  if (player.trail.length > 20) player.trail.shift();
+  player.trail.forEach(t => t.alpha *= 0.88);
+  player.glow *= 0.92;
+
+  // Combo timer
+  if (comboTimer > 0) {
+    comboTimer--;
+    if (comboTimer === 0) {
+      combo = 1;
+      document.getElementById('combo-display').textContent = '×1';
+    }
+  }
+
+  // Scroll objects
+  const scrollDx = speed;
+  spikes.forEach(s => { s.x -= scrollDx; s.y = waveY(s.x); s.baseY = s.y; });
+  crystals.forEach(c => {
+    c.x -= scrollDx;
+    c.angle += 0.04;
+    c.y = waveY(c.x) - 35 + Math.sin(c.angle * 0.5) * 6;
+  });
+
+  // Cleanup off-screen
+  spikes = spikes.filter(s => s.x > -50 && !s.collected);
+  crystals = crystals.filter(c => c.x > -50 && !c.collected);
+
+  // Crystal collection
+  crystals.forEach(c => {
+    if (c.collected) return;
+    const dx = player.x - c.x;
+    const dy = player.y - c.y;
+    if (Math.sqrt(dx*dx + dy*dy) < 22) {
+      c.collected = true;
+      combo = Math.min(combo + 1, 8);
+      comboTimer = 120;
+      const pts = 10 * combo;
+      score += pts;
+      document.getElementById('score-display').textContent = score;
+      const el = document.getElementById('combo-display');
+      el.textContent = '×' + combo;
+      el.classList.remove('pulse');
+      void el.offsetWidth;
+      el.classList.add('pulse');
+      setTimeout(() => el.classList.remove('pulse'), 150);
+      burst(c.x, c.y, `hsl(${c.hue},100%,70%)`, 14);
+      // Score popup particle
+      particles.push({
+        x: c.x, y: c.y - 10,
+        vx: 0, vy: -1.5,
+        life: 1, decay: 0.02,
+        r: 0, text: '+' + pts,
+        color: '#fff',
+      });
+    }
+  });
+
+  // Spike collision
+  spikes.forEach(s => {
+    if (s.collected) return;
+    const dx = player.x - s.x;
+    const dy = player.y - (s.y - s.height * 0.5);
+    if (Math.abs(dx) < 12 && Math.abs(dy) < s.height * 0.6) {
+      killPlayer();
+    }
+  });
+
+  // Update particles
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life -= p.decay;
+  });
+  particles = particles.filter(p => p.life > 0);
+
+  // Stars scroll
+  stars.forEach(s => {
+    s.x -= s.speed;
+    if (s.x < 0) { s.x = W; s.y = Math.random() * H; }
+  });
+
+  // Wave dots indicator
+  const dotCount = 8;
+  const beatFrac = beatTimer / beatInterval;
+  const activeDot = Math.floor(beatFrac * dotCount);
+  for (let i = 0; i < dotCount; i++) {
+    const dot = document.getElementById('dot' + i);
+    if (i === activeDot) dot.classList.add('active');
+    else dot.classList.remove('active');
+  }
+
+  // Danger flash when near spike
+  const nearSpike = spikes.some(s => !s.collected && s.x > player.x && s.x < player.x + 120);
+  document.getElementById('danger-flash').style.opacity = nearSpike ? '1' : '0';
+}
+
+async function killPlayer() {
+  if (player.dead) return;
+  player.dead = true;
+  burst(player.x, player.y, '#ff4040', 20);
+  burst(player.x, player.y, '#ff8040', 15);
+  const syncResult = await gameStorage.syncBestScore('best-score', score, { fallback: 0 });
+  bestScore = Math.max(bestScore, Number(syncResult.localBest || 0));
+  if (syncResult.authenticated && syncResult.userBest?.score != null) {
+    bestScore = Math.max(bestScore, Number(syncResult.userBest.score) || 0);
+  }
+  if (syncResult.globalBest?.score != null) {
+    globalBestScore = Number(syncResult.globalBest.score) || 0;
+  } else {
+    globalBestScore = Math.max(globalBestScore, bestScore);
+  }
+  remoteScoreState = {
+    authenticated: Boolean(syncResult.authenticated),
+    userBest: syncResult.userBest || null,
+    globalBest: syncResult.globalBest || null,
+  };
+  renderScoreMeta();
+}
+
+function showGameOver() {
+  state = 'idle';
+  const overlay = document.getElementById('overlay');
+  const finalEl = document.getElementById('final-score');
+  const bestEl = document.getElementById('best-score');
+  const globalBestEl = document.getElementById('global-best-score');
+  finalEl.style.display = 'block';
+  finalEl.textContent = '本局得分：' + score;
+  bestEl.style.display = 'block';
+  bestEl.textContent = `${remoteScoreState.authenticated ? '账号最高' : '本地最高'}：` + bestScore;
+  globalBestEl.style.display = 'block';
+  globalBestEl.textContent = '全站最高：' + globalBestScore;
+  document.getElementById('start-btn').textContent = '再次冲浪';
+  overlay.style.display = 'flex';
+}
+
+// ─── Draw Background ─────────────────────────────────────────────────────────
+function drawBg() {
+  bgCtx.fillStyle = '#000010';
+  bgCtx.fillRect(0, 0, W, H);
+
+  // Stars
+  stars.forEach(s => {
+    bgCtx.beginPath();
+    bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    bgCtx.fillStyle = `rgba(255,255,255,${s.alpha})`;
+    bgCtx.fill();
+  });
+
+  // Nebula glow
+  const grad = bgCtx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, W*0.6);
+  grad.addColorStop(0, 'rgba(0,50,80,0.15)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  bgCtx.fillStyle = grad;
+  bgCtx.fillRect(0, 0, W, H);
+}
+
+// ─── Draw Wave ───────────────────────────────────────────────────────────────
+function drawWave() {
+  const pulse = wavePulse;
+
+  // Wave fill (below)
+  ctx.beginPath();
+  ctx.moveTo(0, H);
+  for (let x = 0; x <= W; x += 3) {
+    ctx.lineTo(x, waveY(x));
+  }
+  ctx.lineTo(W, H);
+  ctx.closePath();
+
+  const waveGrad = ctx.createLinearGradient(0, H*0.3, 0, H);
+  waveGrad.addColorStop(0, `rgba(0,100,120,${0.25 + pulse * 0.15})`);
+  waveGrad.addColorStop(1, 'rgba(0,20,40,0.6)');
+  ctx.fillStyle = waveGrad;
+  ctx.fill();
+
+  // Wave line glow
+  for (let pass = 0; pass < 3; pass++) {
+    ctx.beginPath();
+    for (let x = 0; x <= W; x += 2) {
+      if (x === 0) ctx.moveTo(x, waveY(x));
+      else ctx.lineTo(x, waveY(x));
+    }
+    const alpha = pass === 0 ? 0.15 : pass === 1 ? 0.4 : 0.9;
+    const width = pass === 0 ? 8 : pass === 1 ? 3 : 1.5;
+    ctx.strokeStyle = `rgba(0,255,200,${alpha + pulse * 0.2})`;
+    ctx.lineWidth = width;
+    ctx.stroke();
+  }
+}
+
+// ─── Draw Spikes ─────────────────────────────────────────────────────────────
+function drawSpikes() {
+  spikes.forEach(s => {
+    if (s.collected) return;
+    const x = s.x, y = s.y, h = s.height;
+
+    // Glow
+    const g = ctx.createRadialGradient(x, y - h, 0, x, y, h * 1.5);
+    g.addColorStop(0, 'rgba(255,50,50,0.6)');
+    g.addColorStop(1, 'rgba(255,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, y - h * 0.5, h * 1.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Spike triangle
+    ctx.beginPath();
+    ctx.moveTo(x, y - h);
+    ctx.lineTo(x - 7, y + 2);
+    ctx.lineTo(x + 7, y + 2);
+    ctx.closePath();
+    ctx.fillStyle = '#ff3030';
+    ctx.fill();
+    ctx.strokeStyle = '#ff8080';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+}
+
+// ─── Draw Crystals ───────────────────────────────────────────────────────────
+function drawCrystals() {
+  crystals.forEach(c => {
+    if (c.collected) return;
+    const x = c.x, y = c.y;
+    const r = c.r;
+    const hue = c.hue;
+
+    // Outer glow
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r * 3);
+    g.addColorStop(0, `hsla(${hue},100%,70%,0.5)`);
+    g.addColorStop(1, `hsla(${hue},100%,70%,0)`);
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, y, r * 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Crystal diamond shape
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(c.angle);
+    ctx.beginPath();
+    ctx.moveTo(0, -r * 1.5);
+    ctx.lineTo(r, 0);
+    ctx.lineTo(0, r * 1.5);
+    ctx.lineTo(-r, 0);
+    ctx.closePath();
+    ctx.fillStyle = `hsl(${hue},100%,75%)`;
+    ctx.fill();
+    ctx.strokeStyle = `hsl(${hue},100%,90%)`;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Inner shine
+    ctx.beginPath();
+    ctx.moveTo(-r * 0.3, -r * 0.8);
+    ctx.lineTo(r * 0.1, -r * 0.2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.restore();
+  });
+}
+
+// ─── Draw Player ─────────────────────────────────────────────────────────────
+function drawPlayer() {
+  if (player.dead && player.deathTimer > 10) return;
+
+  const x = player.x, y = player.y;
+
+  // Trail
+  player.trail.forEach((t, i) => {
+    const frac = i / player.trail.length;
+    ctx.beginPath();
+    ctx.arc(t.x, t.y, 4 * frac, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,255,200,${t.alpha * 0.4 * frac})`;
+    ctx.fill();
+  });
+
+  // Glow
+  const glowR = 20 + player.glow * 15;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, glowR);
+  g.addColorStop(0, `rgba(0,255,200,${0.4 + player.glow * 0.4})`);
+  g.addColorStop(1, 'rgba(0,255,200,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(x, y, glowR, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Core
+  ctx.beginPath();
+  ctx.arc(x, y, 7, 0, Math.PI * 2);
+  ctx.fillStyle = '#00ffc8';
+  ctx.fill();
+
+  // Inner bright
+  ctx.beginPath();
+  ctx.arc(x - 2, y - 2, 3, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.fill();
+}
+
+// ─── Draw Particles ──────────────────────────────────────────────────────────
+function drawParticles() {
+  particles.forEach(p => {
+    if (p.text) {
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.font = 'bold 14px Courier New';
+      ctx.textAlign = 'center';
+      ctx.fillText(p.text, p.x, p.y);
+      ctx.globalAlpha = 1;
+    } else {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.life * 0.8;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  });
+}
+
+// ─── Main Loop ───────────────────────────────────────────────────────────────
+function loop() {
+  update();
+
+  drawBg();
+
+  ctx.clearRect(0, 0, W, H);
+  drawWave();
+  drawSpikes();
+  drawCrystals();
+  drawPlayer();
+  drawParticles();
+
+  requestAnimationFrame(loop);
+}
+
+// ─── Boot ────────────────────────────────────────────────────────────────────
+renderScoreMeta();
+refreshRemoteScoreSummary();
+initStars();
+loop();
+</script>
+</body>
+</html>

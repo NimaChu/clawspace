@@ -1,0 +1,464 @@
+---
+import Layout from '../../components/Layout.astro';
+import { getCurrentUser } from '../../lib/auth.js';
+import { getTranslations } from '../../lib/i18n.js';
+
+const MAX_UPLOAD_SIZE_MB = 25;
+const ENABLE_DIRECT_BLOB_UPLOAD = Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.VERCEL);
+const currentUser = await getCurrentUser(Astro.request);
+const t = getTranslations(Astro.request);
+
+if (!currentUser) {
+  return Astro.redirect('/login?next=%2Fadmin%2Fimport');
+}
+---
+
+<Layout
+  title={t.importTitle}
+  description={t.importDescription}
+>
+  <section class="min-h-screen bg-[#0a0a0a] py-16 lg:py-24">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <div class="mb-12">
+        <p class="inline-flex items-center rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1.5 text-sm font-medium text-cyan-300">
+          Admin Import
+        </p>
+        <h1 class="mt-6 text-4xl md:text-5xl font-bold text-white">{t.importHeading}</h1>
+        <p class="mt-4 max-w-3xl text-lg text-gray-400">
+          {t.importIntro}
+        </p>
+      </div>
+
+      <div class="max-w-3xl">
+        <div class="space-y-8">
+          <div class="rounded-3xl border border-white/10 bg-[#141414] p-8">
+            <form id="app-import-form" class="space-y-6" data-direct-upload-enabled={ENABLE_DIRECT_BLOB_UPLOAD ? 'true' : 'false'}>
+              <div class="block">
+                <span class="mb-3 block text-sm font-semibold uppercase tracking-[0.18em] text-gray-400">
+                  {t.importPackageLabel}
+                </span>
+                <input id="package-file" name="package" type="file" accept=".zip" class="sr-only" required />
+                <label
+                  for="package-file"
+                  id="package-dropzone"
+                  class="block cursor-pointer rounded-2xl border border-dashed border-white/15 bg-white/5 px-4 py-5 transition-colors hover:border-cyan-500/40"
+                >
+                  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-white">{t.importPackagePrompt}</p>
+                      <p id="package-file-name" class="mt-2 text-sm text-gray-400">{t.importPackageEmpty(MAX_UPLOAD_SIZE_MB)}</p>
+                    </div>
+                    <span
+                      class="inline-flex items-center justify-center rounded-full bg-cyan-500 px-5 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-cyan-400"
+                    >
+                      {t.importChooseFile}
+                    </span>
+                  </div>
+                </label>
+              </div>
+
+              <label class="block">
+                <span class="mb-3 block text-sm font-semibold uppercase tracking-[0.18em] text-gray-400">
+                  {t.importModelLabel}
+                </span>
+                <select
+                  id="model-category"
+                  name="modelCategory"
+                  class="block w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition-colors focus:border-cyan-400/40"
+                >
+                  <option value="none" selected>{t.importModelNone}</option>
+                  <option value="text">{t.importModelText}</option>
+                  <option value="multimodal">{t.importModelMultimodal}</option>
+                  <option value="code">{t.importModelCode}</option>
+                </select>
+                <p class="mt-2 text-sm text-gray-500">{t.importModelHint}</p>
+              </label>
+
+              <label class="block">
+                <span class="mb-3 block text-sm font-semibold uppercase tracking-[0.18em] text-gray-400">
+                  {t.importVisibilityLabel}
+                </span>
+                <select
+                  id="published-select"
+                  name="published"
+                  class="block w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition-colors focus:border-cyan-400/40"
+                >
+                  <option value="true" selected>{t.importVisibilityPublic}</option>
+                  <option value="false">{t.importVisibilityPrivate}</option>
+                </select>
+                <p class="mt-2 text-sm text-gray-500">{t.importVisibilityHint}</p>
+              </label>
+
+              <div id="package-preview" class="hidden rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-gray-300"></div>
+
+              <button
+                type="submit"
+                class="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 px-6 py-3 text-base font-semibold text-black transition-transform duration-300 hover:scale-[1.01]"
+              >
+                {t.importSubmit}
+              </button>
+            </form>
+
+            <div id="import-status" class="mt-6 hidden rounded-2xl border px-5 py-4 text-sm"></div>
+          </div>
+
+          <div class="rounded-3xl border border-white/10 bg-[#101010] p-8 text-sm text-gray-300">
+            <h2 class="text-xl font-semibold text-white">{t.importRequirements}</h2>
+            <ul class="mt-5 space-y-3">
+              <li>{t.importRequirement1}</li>
+              <li>{t.importRequirement2}</li>
+              <li>{t.importRequirement3}</li>
+              <li>{t.importRequirement4}</li>
+              <li>{t.importRequirement5(MAX_UPLOAD_SIZE_MB)}</li>
+              <li>{t.importRequirement6}</li>
+            </ul>
+
+            <div class="mt-8 rounded-2xl bg-white/5 p-5">
+              <p class="font-medium text-white">{t.importRecommendedFields}</p>
+              <p class="mt-2 text-gray-400">
+                `name`、`description`、`version`、`author`、`links`、`tags`、`features`、`techStack`、`usageSteps`、`modelCategory`
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script
+    type="module"
+    define:vars={{
+      importPackageEmpty: t.importPackageEmpty(MAX_UPLOAD_SIZE_MB),
+      importPackageEmptyStatic: t.importPackageEmpty(25),
+      importDetailLink: t.importDetailLink,
+      importLaunchLink: t.importLaunchLink,
+      importModelNone: t.importModelNone,
+      importModelText: t.importModelText,
+      importModelMultimodal: t.importModelMultimodal,
+      importModelCode: t.importModelCode,
+      importVisibilityPublic: t.importVisibilityPublic,
+      importVisibilityPrivate: t.importVisibilityPrivate,
+      importSlugTakenTemplate: t.importSlugTaken('__OWNER__'),
+      importSlugOverwrite: t.importSlugOverwrite,
+      importSlugAvailable: t.importSlugAvailable,
+      importSlugUnknownOwner: t.importPreviewUnknown,
+      importCheckSlugFailed: t.importCheckSlugFailed,
+      importPreview: t.importPreview,
+      importPreviewUnnamed: t.importPreviewUnnamed,
+      importPreviewNoDesc: t.importPreviewNoDesc,
+      importPreviewUnknown: t.importPreviewUnknown,
+      importPreviewNone: t.importPreviewNone,
+      importPreviewFile: t.importPreviewFile,
+      importPreviewSlug: t.importPreviewSlug,
+      importPreviewVersion: t.importPreviewVersion,
+      importPreviewTags: t.importPreviewTags,
+      importPreviewModel: t.importPreviewModel,
+      importPreviewVisibility: t.importPreviewVisibility,
+      importPackageTooLarge: t.importPackageTooLarge,
+      importMissingManifest: t.importMissingManifest,
+      importReadFailed: t.importReadFailed,
+      importSelectFirst: t.importSelectFirst,
+      importImporting: t.importImporting,
+      importUploadingBlob: t.importUploadingBlob,
+      importBlobImported: t.importBlobImported,
+      importImportFailed: t.importFailed,
+      importConflictSelf: t.importRequirement6,
+      importOverwritePrivate: t.importOverwritePrivate('__NAME__'),
+      importOverwritePublic: t.importOverwritePublic('__NAME__'),
+      importCreatedPrivate: t.importCreatedPrivate('__NAME__'),
+      importCreatedPublic: t.importCreatedPublic('__NAME__'),
+    }}
+  >
+    import JSZip from 'https://esm.sh/jszip@3.10.1';
+    import { upload as uploadToBlob } from 'https://esm.sh/@vercel/blob@2.3.1/client';
+
+    const MAX_UPLOAD_SIZE_BYTES = 25 * 1024 * 1024;
+    const DIRECT_UPLOAD_THRESHOLD_BYTES = 4.5 * 1024 * 1024;
+    const form = document.getElementById('app-import-form');
+    const fileInput = document.getElementById('package-file');
+    const statusBox = document.getElementById('import-status');
+    const previewBox = document.getElementById('package-preview');
+    const modelCategorySelect = document.getElementById('model-category');
+    const publishedSelect = document.getElementById('published-select');
+    const fileNameLabel = document.getElementById('package-file-name');
+    const dropzone = document.getElementById('package-dropzone');
+    const directUploadEnabled = form?.dataset.directUploadEnabled === 'true';
+    const submitButton = form?.querySelector('button[type="submit"]');
+    let latestSlugCheck = null;
+    let modelCategoryTouched = false;
+
+    function normalizeManifestModelCategory(value) {
+      const category = String(value || '').trim().toLowerCase();
+      return ['none', 'text', 'multimodal', 'code'].includes(category) ? category : '';
+    }
+
+    function syncModelCategoryFromManifest(manifest) {
+      if (!modelCategorySelect || modelCategoryTouched) return;
+      const manifestCategory = normalizeManifestModelCategory(manifest?.modelCategory);
+      modelCategorySelect.value = manifestCategory || 'none';
+    }
+
+    function showStatus(type, message, links = {}) {
+      statusBox.className = 'mt-6 rounded-2xl border px-5 py-4 text-sm';
+      statusBox.classList.remove('hidden');
+
+      if (type === 'success') {
+        statusBox.classList.add('border-emerald-500/30', 'bg-emerald-500/10', 'text-emerald-200');
+      } else {
+        statusBox.classList.add('border-rose-500/30', 'bg-rose-500/10', 'text-rose-200');
+      }
+
+      const extraLinks = [];
+      if (links.detailUrl) extraLinks.push(`<a class="underline" href="${links.detailUrl}">${importDetailLink}</a>`);
+      if (links.launchUrl) extraLinks.push(`<a class="underline" href="${links.launchUrl}">${importLaunchLink}</a>`);
+
+      statusBox.innerHTML = `
+        <p>${message}</p>
+        ${extraLinks.length ? `<p class="mt-3 flex flex-wrap gap-4">${extraLinks.join('')}</p>` : ''}
+      `;
+    }
+
+    function formatModelCategory(value) {
+      if (value === 'none') return importModelNone;
+      if (value === 'multimodal') return importModelMultimodal;
+      if (value === 'code') return importModelCode;
+      return importModelText;
+    }
+
+    function formatPublished(value) {
+      return value === 'false' ? importVisibilityPrivate : importVisibilityPublic;
+    }
+
+    function renderSlugStatus(status) {
+      if (!status) return '';
+      if (status.exists && !status.canOverwrite) {
+        return `<p class="md:col-span-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-rose-200">${importSlugTakenTemplate.replace('__OWNER__', status.ownerName || importSlugUnknownOwner)}</p>`;
+      }
+
+      if (status.exists && status.canOverwrite) {
+        return `<p class="md:col-span-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-amber-200">${importSlugOverwrite}</p>`;
+      }
+
+      return `<p class="md:col-span-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-emerald-200">${importSlugAvailable}</p>`;
+    }
+
+    function updateSubmitButtonState() {
+      if (!submitButton) return;
+      const blocked = latestSlugCheck?.exists && !latestSlugCheck?.canOverwrite;
+      submitButton.disabled = Boolean(blocked);
+      submitButton.classList.toggle('opacity-50', Boolean(blocked));
+      submitButton.classList.toggle('cursor-not-allowed', Boolean(blocked));
+    }
+
+    async function checkSlugAvailability(slug) {
+      if (!slug) return null;
+
+      const response = await fetch(`/api/app-slug-check?slug=${encodeURIComponent(slug)}`);
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || importCheckSlugFailed);
+      }
+
+      return result;
+    }
+
+    function renderPreview(manifest, fileName, slugStatus) {
+      previewBox.classList.remove('hidden');
+      const slug = manifest.slug || manifest.id || 'unknown';
+      const tags = Array.isArray(manifest.tags) ? manifest.tags.join(' / ') : '无';
+      const selectedModelCategory = modelCategorySelect?.value || manifest.modelCategory || 'text';
+      const selectedPublished = publishedSelect?.value || 'true';
+
+      previewBox.innerHTML = `
+        <p class="text-xs uppercase tracking-[0.18em] text-gray-500">${importPreview}</p>
+        <h3 class="mt-3 text-lg font-semibold text-white">${manifest.name || importPreviewUnnamed}</h3>
+        <p class="mt-2 text-gray-400">${manifest.description || importPreviewNoDesc}</p>
+        <div class="mt-4 grid gap-3 md:grid-cols-2">
+          <p><span class="text-gray-500">${importPreviewFile}:</span> ${fileName}</p>
+          <p><span class="text-gray-500">${importPreviewSlug}:</span> ${slug}</p>
+          <p><span class="text-gray-500">${importPreviewVersion}:</span> ${manifest.version || importPreviewUnknown}</p>
+          <p><span class="text-gray-500">${importPreviewTags}:</span> ${tags}</p>
+          <p><span class="text-gray-500">${importPreviewModel}:</span> ${formatModelCategory(selectedModelCategory)}</p>
+          <p><span class="text-gray-500">${importPreviewVisibility}:</span> ${formatPublished(selectedPublished)}</p>
+          ${renderSlugStatus(slugStatus)}
+        </div>
+      `;
+    }
+
+    async function previewSelectedPackage(file) {
+      if (!file) {
+        previewBox.classList.add('hidden');
+        previewBox.innerHTML = '';
+        return;
+      }
+
+      if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+        throw new Error(importPackageTooLarge);
+      }
+
+      try {
+        const zip = await JSZip.loadAsync(await file.arrayBuffer());
+        const manifestEntry = zip.file('manifest.json');
+        if (!manifestEntry) {
+          throw new Error(importMissingManifest);
+        }
+
+        const manifest = JSON.parse(await manifestEntry.async('string'));
+        syncModelCategoryFromManifest(manifest);
+        const slug = manifest.slug || manifest.id || '';
+        latestSlugCheck = await checkSlugAvailability(slug);
+        renderPreview(manifest, file.name, latestSlugCheck);
+        updateSubmitButtonState();
+      } catch (error) {
+        latestSlugCheck = null;
+        updateSubmitButtonState();
+        previewBox.classList.remove('hidden');
+        previewBox.innerHTML = `<p class="text-rose-300">${error instanceof Error ? error.message : importReadFailed}</p>`;
+      }
+    }
+
+    async function syncSelectedFile(file) {
+      fileNameLabel.textContent = file?.name || importPackageEmptyStatic;
+      latestSlugCheck = null;
+      updateSubmitButtonState();
+
+      try {
+        await previewSelectedPackage(file);
+      } catch (error) {
+        previewBox.classList.remove('hidden');
+        previewBox.innerHTML = `<p class="text-rose-300">${error instanceof Error ? error.message : importReadFailed}</p>`;
+      }
+    }
+
+    fileInput?.addEventListener('change', async () => {
+      modelCategoryTouched = false;
+      await syncSelectedFile(fileInput.files?.[0]);
+    });
+
+    ['dragenter', 'dragover'].forEach((eventName) => {
+      dropzone?.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.add('border-cyan-400', 'bg-cyan-500/10');
+      });
+    });
+
+    ['dragleave', 'dragend', 'drop'].forEach((eventName) => {
+      dropzone?.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.remove('border-cyan-400', 'bg-cyan-500/10');
+      });
+    });
+
+    dropzone?.addEventListener('drop', async (event) => {
+      const files = event.dataTransfer?.files;
+      if (!files?.length) return;
+
+      const file = files[0];
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      fileInput.files = dataTransfer.files;
+      modelCategoryTouched = false;
+      await syncSelectedFile(file);
+    });
+
+    modelCategorySelect?.addEventListener('change', async () => {
+      modelCategoryTouched = true;
+      await previewSelectedPackage(fileInput.files?.[0]);
+    });
+
+    publishedSelect?.addEventListener('change', async () => {
+      await previewSelectedPackage(fileInput.files?.[0]);
+    });
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const selectedFile = fileInput.files?.[0];
+      const modelCategory = modelCategorySelect?.value || 'none';
+      const published = publishedSelect?.value || 'true';
+
+      if (!selectedFile) {
+        showStatus('error', importSelectFirst);
+        return;
+      }
+
+      if (latestSlugCheck?.exists && !latestSlugCheck?.canOverwrite) {
+        showStatus('error', importSlugTakenTemplate.replace('__OWNER__', latestSlugCheck.ownerName || importSlugUnknownOwner));
+        return;
+      }
+
+      showStatus('success', importImporting);
+
+      try {
+        let response;
+        if (directUploadEnabled && selectedFile.size > DIRECT_UPLOAD_THRESHOLD_BYTES) {
+          showStatus('success', importUploadingBlob);
+
+          const safeName = selectedFile.name.replace(/[^a-zA-Z0-9._-]+/g, '-');
+          const uploadedBlob = await uploadToBlob(
+            `package-uploads/${Date.now()}-${safeName}`,
+            selectedFile,
+            {
+              access: 'public',
+              handleUploadUrl: '/api/upload-package-token',
+            }
+          );
+
+          showStatus('success', importBlobImported);
+
+          response = await fetch('/api/import-app', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              blobUrl: uploadedBlob.url,
+              blobPathname: uploadedBlob.pathname,
+              modelCategory,
+              published,
+            }),
+          });
+        } else {
+          const formData = new FormData(form);
+          response = await fetch('/api/import-app', {
+            method: 'POST',
+            body: formData,
+          });
+        }
+
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+          if (response.status === 409 || result.code === 'APP_SLUG_CONFLICT') {
+            throw new Error(
+              result.ownerName
+                ? `slug「${result.slug || 'unknown'}」已被用户「${result.ownerName}」使用，请换一个新的应用标识。`
+                : result.error || importSlugOverwrite
+            );
+          }
+          throw new Error(result.error || importImportFailed);
+        }
+
+        showStatus(
+          'success',
+          result.overwritten
+            ? result.app.published === false
+              ? importOverwritePrivate.replace('__NAME__', result.app.name)
+              : importOverwritePublic.replace('__NAME__', result.app.name)
+            : result.app.published === false
+              ? importCreatedPrivate.replace('__NAME__', result.app.name)
+              : importCreatedPublic.replace('__NAME__', result.app.name),
+          {
+            detailUrl: `/apps/${result.app.slug}`,
+            launchUrl: result.app.launchUrl,
+          }
+        );
+
+        window.setTimeout(() => {
+          window.location.reload();
+        }, 900);
+      } catch (error) {
+        showStatus('error', error instanceof Error ? error.message : importImportFailed);
+      }
+    });
+  </script>
+</Layout>

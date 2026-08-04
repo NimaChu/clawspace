@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orbit Tap</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hud">
+        <p class="eyebrow">Mini Game Starter</p>
+        <h1>Orbit Tap</h1>
+        <p class="subtitle">点击移动中的星球，45 秒内拿到最高分。</p>
+        <div class="stats">
+          <div class="stat-card">
+            <span>得分</span>
+            <strong id="score">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>最高分</span>
+            <strong id="best-score">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>全站最高</span>
+            <strong id="global-best-score">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>剩余时间</span>
+            <strong id="time">45</strong>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="start-button">开始游戏</button>
+          <button id="pause-button" class="ghost">暂停</button>
+          <button id="reset-button" class="ghost">重新开始</button>
+        </div>
+        <p class="status-line" id="status-line">准备好后开始，手机和桌面都能直接游玩。</p>
+      </section>
+
+      <section class="game-board">
+        <div class="orbit orbit-a"></div>
+        <div class="orbit orbit-b"></div>
+        <button id="planet" class="planet" aria-label="点击星球得分"></button>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+  </html>

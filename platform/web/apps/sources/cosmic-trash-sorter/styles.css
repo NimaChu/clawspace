@@ -1,0 +1,268 @@
+:root {
+  color-scheme: dark;
+  --bg: #040816;
+  --panel: rgba(10, 18, 32, 0.78);
+  --line: rgba(255, 255, 255, 0.1);
+  --text: #eef6ff;
+  --muted: #9fb5c9;
+  --accent: #4ade80;
+  --accent-2: #38bdf8;
+  --plastic: #fbbf24;
+  --metal: #9ca3af;
+  --organic: #10b981;
+  --toxic: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top, rgba(59, 130, 246, 0.22), transparent 28%),
+    radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.14), transparent 20%),
+    linear-gradient(180deg, #09111f 0%, var(--bg) 100%);
+}
+
+.app-shell {
+  width: min(1080px, calc(100% - 32px));
+  margin: 0 auto;
+  min-height: 100vh;
+  display: grid;
+  gap: 24px;
+  align-items: center;
+  grid-template-columns: 1fr 1.1fr;
+}
+
+.hud,
+.game-board {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  border-radius: 28px;
+}
+
+.hud {
+  padding: 32px;
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--accent-2);
+  font-size: 12px;
+}
+
+h1 {
+  margin: 16px 0 10px;
+  font-size: clamp(36px, 5vw, 64px);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 28px 0;
+}
+
+.stat-card {
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.stat-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 28px;
+}
+
+.sorting-indicator {
+  margin: 24px 0;
+}
+
+.sorting-indicator p {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.categories {
+  display: flex;
+  gap: 12px;
+}
+
+.category {
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.category.plastic {
+  background-color: rgba(251, 191, 36, 0.2);
+  border: 1px solid var(--plastic);
+  color: var(--plastic);
+}
+
+.category.metal {
+  background-color: rgba(156, 163, 175, 0.2);
+  border: 1px solid var(--metal);
+  color: var(--metal);
+}
+
+.category.organic {
+  background-color: rgba(16, 185, 129, 0.2);
+  border: 1px solid var(--organic);
+  color: var(--organic);
+}
+
+.category.toxic {
+  background-color: rgba(239, 68, 68, 0.2);
+  border: 1px solid var(--toxic);
+  color: var(--toxic);
+}
+
+.category.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+#start-button {
+  color: #032311;
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+}
+
+.ghost {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
+}
+
+.game-board {
+  position: relative;
+  min-height: 560px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.05), transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.05), transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(245, 158, 11, 0.05), transparent 50%);
+}
+
+.spaceship {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  font-size: 48px;
+  z-index: 10;
+  transition: left 0.1s ease-out, top 0.1s ease-out;
+  pointer-events: none;
+}
+
+.trash-item {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  z-index: 5;
+}
+
+.trash-item.plastic-trash {
+  background-color: var(--plastic);
+  color: #1e293b;
+}
+
+.trash-item.metal-trash {
+  background-color: var(--metal);
+  color: #1e293b;
+}
+
+.trash-item.organic-trash {
+  background-color: var(--organic);
+  color: white;
+}
+
+.trash-item.toxic-trash {
+  background-color: var(--toxic);
+  color: white;
+}
+
+.trash-item:hover {
+  transform: scale(1.2);
+}
+
+.collect-effect {
+  position: absolute;
+  font-size: 24px;
+  font-weight: bold;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+  animation: floatUp 1s forwards;
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    padding: 24px 0;
+  }
+
+  .game-board {
+    min-height: 420px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}

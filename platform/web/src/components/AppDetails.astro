@@ -1,0 +1,320 @@
+---
+import { getTranslationsForLocale } from '../lib/i18n.js';
+import { getCreatorPath } from '../lib/creator-universe.js';
+const { app, relatedApps = [], currentUser = null, isStarred = false } = Astro.props;
+const t = getTranslationsForLocale(Astro.props.locale);
+const formattedReadme = (app.readme || '')
+  .replace(/^##\s+/gm, '')
+  .replace(/^#\s+/gm, '')
+  .replace(/^- /gm, '• ')
+  .trim();
+const creatorSlug = app.hasVerifiedCreator ? app.creatorSlug : '';
+
+function getFallbackCoverClasses(seed = '') {
+  const palettes = [
+    'from-cyan-500/35 via-sky-500/15 to-slate-950',
+    'from-fuchsia-500/30 via-violet-500/12 to-slate-950',
+    'from-amber-400/30 via-orange-500/12 to-slate-950',
+    'from-emerald-400/30 via-teal-500/12 to-slate-950',
+  ];
+  const value = String(seed || '');
+  const index = value
+    .split('')
+    .reduce((sum, char) => sum + char.charCodeAt(0), 0) % palettes.length;
+  return palettes[index];
+}
+---
+
+<div class="min-h-screen bg-[#0a0a0a]">
+  <section class="py-12 lg:py-20">
+    <div class="container mx-auto px-4">
+      <a href="/#apps" class="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-8">
+        <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        {t.backToAtlas}
+      </a>
+
+      <article class="bg-[#1f1f1f] rounded-3xl border border-gray-800 overflow-hidden">
+        <div class="relative">
+          {(app.thumbnailDisplayUrl || app.thumbnailUrl) && (
+            <div class="h-64 md:h-80 overflow-hidden">
+              <img src={app.thumbnailDisplayUrl || app.thumbnailUrl} alt={app.name} class="w-full h-full object-cover" />
+            </div>
+          )}
+          {!(app.thumbnailDisplayUrl || app.thumbnailUrl) && (
+            <div class={`relative flex h-64 items-end overflow-hidden bg-gradient-to-br ${getFallbackCoverClasses(app.slug)} md:h-80`}>
+              <div class="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.18)_0,transparent_16%),radial-gradient(circle_at_78%_28%,rgba(255,255,255,0.14)_0,transparent_14%),radial-gradient(circle_at_52%_74%,rgba(255,255,255,0.1)_0,transparent_18%)]"></div>
+              <div class="relative z-10 p-8 md:p-10">
+                <div class="inline-flex items-center rounded-full border border-white/15 bg-slate-950/45 px-3 py-1 text-xs font-medium uppercase tracking-[0.24em] text-cyan-100 backdrop-blur">
+                  {t.atlasDefaultCover}
+                </div>
+                <h2 class="mt-4 max-w-2xl text-3xl font-semibold text-white md:text-4xl">
+                  {app.name}
+                </h2>
+              </div>
+            </div>
+          )}
+          <div class="absolute inset-0 bg-gradient-to-t from-[#1f1f1f] to-transparent"></div>
+        </div>
+
+        <div class="p-8 pt-16 md:pt-24">
+          <div class="max-w-4xl mx-auto">
+            <div class="flex flex-wrap items-center gap-4 mb-6">
+              {(app.tags || []).length > 0 && (
+                <div class="flex flex-wrap gap-2">
+                  {app.tags.map((tag) => (
+                    <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {app.featured && (
+                <span class="px-3 py-1 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 rounded-full text-sm border border-yellow-500/30">
+                  {t.appFeatured}
+                </span>
+              )}
+
+              <span class="px-3 py-1 rounded-full text-sm bg-white/5 text-gray-300 border border-white/10">
+                {app.category}
+              </span>
+            </div>
+
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">{app.name}</h1>
+            <p class="text-xl text-gray-300 mb-8">{app.description}</p>
+
+            <div class="flex flex-wrap gap-4 mb-12">
+              <a
+                href={app.launchUrl}
+                target="_blank"
+                rel="noreferrer"
+                class="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300"
+              >
+                {t.atlasTryNow}
+              </a>
+              {app.githubUrl && (
+                <a
+                  href={app.githubUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="px-8 py-4 bg-gray-800 text-white rounded-xl font-semibold text-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+                >
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                  </svg>
+                  {t.appGitHub}
+                </a>
+              )}
+              {app.downloadUrl && (
+                <a
+                  href={app.downloadUrl}
+                  class="flex items-center gap-2 rounded-xl border border-white/15 bg-white/8 px-8 py-4 text-lg font-semibold text-white transition-colors hover:border-white/25 hover:bg-white/12"
+                >
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" />
+                  </svg>
+                  {t.appDownload}
+                </a>
+              )}
+              <button
+                type="button"
+                class={`inline-flex items-center gap-2 rounded-xl px-6 py-4 font-semibold text-lg transition-colors ${
+                  isStarred
+                    ? 'border border-amber-300/25 bg-amber-400/15 text-amber-200 hover:border-amber-200/40 hover:bg-amber-400/20'
+                    : 'border border-white/15 bg-white/8 text-white hover:border-white/25 hover:bg-white/12'
+                }`}
+                data-app-star-button
+                data-app-slug={app.slug}
+                data-authenticated={currentUser ? 'true' : 'false'}
+              >
+                <span data-app-star-icon>{isStarred ? '★' : '☆'}</span>
+                <span data-app-star-label>{isStarred ? t.appStarred : t.appStarAction}</span>
+                <span class="text-amber-200" data-app-star-count>{app.stars || 0}</span>
+              </button>
+            </div>
+
+            <div class="grid gap-6 md:grid-cols-2 mb-16">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <p class="text-sm uppercase tracking-[0.18em] text-gray-500 mb-3">{t.appAuthor}</p>
+                {creatorSlug ? (
+                  <>
+                    <a href={getCreatorPath(creatorSlug)} class="text-white text-lg font-semibold hover:text-cyan-300 transition-colors">
+                      {app.authorName}
+                    </a>
+                    <p class="mt-2 text-sm text-gray-400">{t.appAuthorHint}</p>
+                  </>
+                ) : (
+                  <>
+                    <p class="text-white text-lg font-semibold">{app.authorName}</p>
+                    <p class="mt-2 text-sm text-gray-400">{t.appAuthorUnverified}</p>
+                  </>
+                )}
+                {app.authorUrl && (
+                  <a href={app.authorUrl} target="_blank" rel="noreferrer" class="mt-2 inline-flex text-cyan-300 hover:text-cyan-200">
+                    {app.authorUrl}
+                  </a>
+                )}
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <p class="text-sm uppercase tracking-[0.18em] text-gray-500 mb-3">{t.appVersionRuntime}</p>
+                <p class="text-white text-lg font-semibold">v{app.version}</p>
+                <p class="text-gray-400">{app.runtime}</p>
+                <p class="mt-2 text-amber-200"><span data-app-star-summary>{app.stars || 0}</span> Stars</p>
+              </div>
+            </div>
+
+            {formattedReadme && (
+              <div class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-6">{t.appIntro}</h2>
+                <div class="rounded-3xl border border-white/10 bg-[#151515] p-6 whitespace-pre-wrap leading-relaxed text-gray-300">
+                  {formattedReadme}
+                </div>
+              </div>
+            )}
+
+            {(app.features || []).length > 0 && (
+              <div class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-6">{t.appFeatures}</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {app.features.map((feature) => (
+                    <div class="flex items-start gap-3 p-4 bg-gray-900/50 rounded-xl border border-gray-800">
+                      <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span class="text-gray-300">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {(app.techStack || []).length > 0 && (
+              <div class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-6">{t.appTechStack}</h2>
+                <div class="flex flex-wrap gap-2">
+                  {app.techStack.map((tech) => (
+                    <span class="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg text-sm">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {(app.usageSteps || []).length > 0 && (
+              <div class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-6">{t.appUsage}</h2>
+                <ol class="space-y-3 text-gray-300">
+                  {app.usageSteps.map((step, index) => (
+                    <li class="flex gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                      <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300 font-semibold">
+                        {index + 1}
+                      </span>
+                      <span>{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
+            {(app.screenshotUrls || []).length > 0 && (
+              <div>
+                <h2 class="text-2xl font-bold text-white mb-6">{t.appScreenshots}</h2>
+                <div class="grid gap-4 md:grid-cols-2">
+                  {app.screenshotUrls.map((imageUrl) => (
+                    <div class="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                      <img src={imageUrl} alt={`${app.name} screenshot`} class="h-full w-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </article>
+
+      {relatedApps.length > 0 && (
+        <section class="mt-20">
+          <h2 class="text-3xl font-bold text-white mb-12 text-center">{t.appRelated}</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {relatedApps.map((relatedApp) => (
+              <a
+                href={`/apps/${relatedApp.slug}`}
+                class="block bg-[#2a2a2a] rounded-2xl border border-gray-700 overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/10"
+              >
+                <div class="h-36 overflow-hidden bg-[#333333] flex items-center justify-center">
+                  {relatedApp.thumbnailDisplayUrl || relatedApp.thumbnailUrl ? (
+                    <img src={relatedApp.thumbnailDisplayUrl || relatedApp.thumbnailUrl} alt={relatedApp.name} class="w-full h-full object-cover" />
+                  ) : (
+                    <div class={`relative flex h-full w-full items-end bg-gradient-to-br ${getFallbackCoverClasses(relatedApp.slug)}`}>
+                      <div class="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.16)_0,transparent_16%),radial-gradient(circle_at_78%_28%,rgba(255,255,255,0.12)_0,transparent_14%)]"></div>
+                      <div class="relative z-10 p-4 text-sm font-semibold text-white">
+                        {relatedApp.name}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div class="p-5">
+                  <h3 class="text-lg font-bold text-white mb-2">{relatedApp.name}</h3>
+                  <p class="text-gray-400 text-sm mb-4 line-clamp-2">{relatedApp.description}</p>
+                  <div class="flex flex-wrap gap-1.5">
+                    {(relatedApp.tags || []).slice(0, 2).map((tag) => (
+                      <span class="px-2 py-1 bg-blue-500/15 text-blue-300 rounded-full text-xs">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  </section>
+</div>
+
+<script define:vars={{ starredText: t.appStarred, starActionText: t.appStarAction }}>
+  const appStarButton = document.querySelector('[data-app-star-button]');
+  const appStarSummary = document.querySelector('[data-app-star-summary]');
+
+  if (appStarButton) {
+    appStarButton.addEventListener('click', async () => {
+      const slug = appStarButton.getAttribute('data-app-slug');
+      const authenticated = appStarButton.getAttribute('data-authenticated') === 'true';
+
+      if (!authenticated) {
+        window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+        return;
+      }
+
+      const response = await fetch('/api/update-app', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug, action: 'toggle-star' }),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        return;
+      }
+
+      const starred = Boolean(result.starred);
+      appStarButton.className = `inline-flex items-center gap-2 rounded-xl px-6 py-4 font-semibold text-lg transition-colors ${
+        starred
+          ? 'border border-amber-300/25 bg-amber-400/15 text-amber-200 hover:border-amber-200/40 hover:bg-amber-400/20'
+          : 'border border-white/15 bg-white/8 text-white hover:border-white/25 hover:bg-white/12'
+      }`;
+
+      const icon = appStarButton.querySelector('[data-app-star-icon]');
+      const label = appStarButton.querySelector('[data-app-star-label]');
+      const count = appStarButton.querySelector('[data-app-star-count]');
+
+      if (icon) icon.textContent = starred ? '★' : '☆';
+      if (label) label.textContent = starred ? starredText : starActionText;
+      if (count) count.textContent = `${result.count}`;
+      if (appStarSummary) appStarSummary.textContent = `${result.count}`;
+    });
+  }
+</script>

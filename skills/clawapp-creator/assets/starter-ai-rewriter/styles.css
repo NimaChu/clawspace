@@ -1,0 +1,66 @@
+:root {
+  color-scheme: dark;
+  --bg: #070d1a;
+  --panel: rgba(12, 18, 34, 0.84);
+  --line: rgba(255,255,255,0.1);
+  --text: #eef6ff;
+  --muted: #9fb5c9;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top, rgba(99, 102, 241, 0.18), transparent 28%),
+    linear-gradient(180deg, #09101f 0%, var(--bg) 100%);
+}
+.app-shell {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: center;
+}
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+}
+.copy-panel,
+.result-panel { padding: 32px; }
+.eyebrow { margin: 0; text-transform: uppercase; letter-spacing: 0.24em; color: #a5b4fc; font-size: 12px; }
+h1 { margin: 14px 0 10px; font-size: clamp(36px, 5vw, 64px); }
+.subtitle { margin: 0; color: var(--muted); line-height: 1.7; }
+.field { display:block; margin-top: 24px; }
+.field span { display:block; margin-bottom: 8px; color: var(--muted); }
+textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  padding: 16px;
+  resize: vertical;
+}
+.actions { display:flex; gap:12px; flex-wrap:wrap; margin-top: 18px; }
+button { border: 0; cursor:pointer; border-radius:999px; padding:14px 20px; font-weight:700; }
+#generate-button { background: linear-gradient(135deg, #a78bfa, #6366f1); color: white; }
+.ghost { background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid var(--line); }
+.result-head { display:flex; align-items:center; justify-content:space-between; color: var(--muted); margin-bottom: 18px; }
+.result-box {
+  min-height: 260px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255,255,255,0.04);
+  padding: 18px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+@media (max-width: 900px) {
+  .app-shell { grid-template-columns: 1fr; padding: 24px 0; }
+}

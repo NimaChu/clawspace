@@ -1,0 +1,105 @@
+<view class="page-shell me-shell">
+  <view wx:if="{{loading}}" class="glass-card placeholder-card">
+    正在加载账号信息...
+  </view>
+
+  <block wx:elif="{{user}}">
+    <view class="glass-card profile-card subtle-grid">
+      <view class="section-kicker">MY COCKPIT</view>
+      <view class="profile-top">
+        <view>
+          <view class="profile-name">{{user.displayName}}</view>
+          <view class="muted profile-meta">{{user.email}}</view>
+        </view>
+        <view class="signal-chip">{{user.role}}</view>
+      </view>
+
+      <view class="profile-grid">
+        <view class="profile-stat">
+          <view class="profile-stat-value">{{starredApps.length}}</view>
+          <view class="profile-stat-label">已收藏应用</view>
+        </view>
+        <view class="profile-stat">
+          <view class="profile-stat-value">{{user.githubConnected ? 'GitHub' : 'Password'}}</view>
+          <view class="profile-stat-label">登录方式</view>
+        </view>
+      </view>
+
+      <view class="profile-actions">
+        <view class="secondary-button logout-button" bindtap="handleLogout">退出登录</view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-head">
+        <view>
+          <view class="section-kicker">STARRED SIGNALS</view>
+          <view class="section-title">我的收藏</view>
+        </view>
+      </view>
+
+      <view wx:if="{{starredApps.length}}" class="card-list">
+        <view
+          wx:for="{{starredApps}}"
+          wx:key="slug"
+          class="glass-card starred-card"
+          bindtap="openAppDetail"
+          data-slug="{{item.slug}}"
+        >
+          <view class="starred-top">
+            <view>
+              <view class="starred-name">{{item.name}}</view>
+              <view class="muted starred-author">{{item.authorName}}</view>
+            </view>
+            <view class="signal-chip">{{item.wechatSupport}}</view>
+          </view>
+          <view class="starred-desc muted">{{item.description}}</view>
+          <view class="starred-row">
+            <view class="muted">★ {{item.starCount}}</view>
+            <view class="starred-open">查看详情</view>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="glass-card placeholder-card">
+        你还没有收藏任何应用。先去应用星图给喜欢的作品点星吧。
+      </view>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="glass-card auth-card subtle-grid">
+      <view class="section-kicker">ACCOUNT ACCESS</view>
+      <view class="auth-heading">登录你的 CLAWSPACE 舰桥</view>
+      <view class="muted auth-copy">
+        登录后可以看到简化个人信息，以及你在 CLAWSPACE 里加星过的应用。
+      </view>
+
+      <view class="auth-tabs">
+        <view class="auth-tab {{mode === 'login' ? 'auth-tab-active' : ''}}" data-mode="login" bindtap="switchMode">登录</view>
+        <view class="auth-tab {{mode === 'register' ? 'auth-tab-active' : ''}}" data-mode="register" bindtap="switchMode">注册</view>
+      </view>
+
+      <view wx:if="{{mode === 'register'}}" class="form-block">
+        <view class="form-label">显示名称</view>
+        <input class="form-input" placeholder="例如：嘎吱猫" data-field="displayName" value="{{form.displayName}}" bindinput="onInputChange" />
+      </view>
+
+      <view class="form-block">
+        <view class="form-label">邮箱</view>
+        <input class="form-input" type="text" placeholder="you@example.com" data-field="email" value="{{form.email}}" bindinput="onInputChange" />
+      </view>
+
+      <view class="form-block">
+        <view class="form-label">密码</view>
+        <input class="form-input" password="true" placeholder="至少 8 位" data-field="password" value="{{form.password}}" bindinput="onInputChange" />
+      </view>
+
+      <view wx:if="{{error}}" class="status-card status-error">{{error}}</view>
+      <view wx:if="{{success}}" class="status-card status-success">{{success}}</view>
+
+      <view class="primary-button auth-submit" bindtap="submitAuth">
+        {{saving ? '处理中...' : (mode === 'register' ? '注册并登录' : '登录')}}
+      </view>
+    </view>
+  </block>
+</view>

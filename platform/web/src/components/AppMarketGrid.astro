@@ -1,0 +1,441 @@
+---
+import { getPublishedApps } from '../lib/app-registry.js';
+import { getCurrentUser } from '../lib/auth.js';
+import { getUserStarredSlugs } from '../lib/app-stars.js';
+import { getTranslations } from '../lib/i18n.js';
+import { wasRuntimeStorageDegraded } from '../lib/runtime-storage.js';
+
+let apps = [];
+let allTags = [];
+let currentUser = null;
+let starredSlugs = [];
+let runtimeDegraded = false;
+const t = getTranslations(Astro.request);
+const APPS_PER_PAGE = 12;
+const siteOrigin = new URL(Astro.request.url).origin;
+
+function buildShareText(app) {
+  return [app?.name, app?.description, app?.detailUrl || `${siteOrigin}/apps/${app?.slug}`]
+    .filter((value) => typeof value === 'string' && value.trim())
+    .join('\n');
+}
+
+function getFallbackCoverClasses(seed = '') {
+  const palettes = [
+    'from-cyan-500/30 via-sky-500/10 to-slate-950',
+    'from-fuchsia-500/25 via-violet-500/10 to-slate-950',
+    'from-amber-400/25 via-orange-500/10 to-slate-950',
+    'from-emerald-400/25 via-teal-500/10 to-slate-950',
+  ];
+  const value = String(seed || '');
+  const index = value
+    .split('')
+    .reduce((sum, char) => sum + char.charCodeAt(0), 0) % palettes.length;
+  return palettes[index];
+}
+
+try {
+  apps = await getPublishedApps();
+  currentUser = await getCurrentUser(Astro.request);
+  starredSlugs = currentUser ? await getUserStarredSlugs(currentUser.id) : [];
+  const tagFrequency = new Map();
+  apps.forEach((app) => {
+    (app.tags ?? [])
+      .filter((tag) => typeof tag === 'string' && tag.trim())
+      .forEach((tag) => {
+        const normalizedTag = tag.trim();
+        tagFrequency.set(normalizedTag, (tagFrequency.get(normalizedTag) || 0) + 1);
+      });
+  });
+  allTags = [...tagFrequency.entries()]
+    .sort((a, b) => {
+      if (b[1] !== a[1]) return b[1] - a[1];
+      return String(a[0]).localeCompare(String(b[0]));
+    })
+    .slice(0, 12)
+    .map(([tag]) => tag);
+} catch (error) {
+  console.error('AppMarketGrid data load failed', error);
+}
+
+runtimeDegraded = wasRuntimeStorageDegraded();
+---
+
+<div id="apps" class="bg-[#050816] py-20 lg:py-28">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-16 lg:mb-24">
+      <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+        {t.atlasTitle}
+      </h2>
+      <p class="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto">
+        {t.atlasDesc}
+      </p>
+    </div>
+
+    <div class="max-w-6xl mx-auto mb-12 space-y-6" data-app-filter-root>
+      {runtimeDegraded && (
+        <div class="rounded-2xl border border-amber-300/15 bg-amber-300/8 px-4 py-3 text-sm text-amber-100">
+          应用星图当前展示的是维护兜底视图。数据库配额恢复后，完整应用数据会自动回来。
+        </div>
+      )}
+      <div class="relative group">
+        <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/30 via-blue-500/20 to-fuchsia-500/20 blur opacity-60 transition-opacity duration-300 group-focus-within:opacity-100"></div>
+        <div class="relative flex items-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur transition-all duration-300 focus-within:border-cyan-400/40">
+          <svg class="w-5 h-5 text-slate-400 ml-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <input
+            type="search"
+            placeholder={t.atlasSearch}
+            class="w-full border-none bg-transparent px-4 py-4 text-base text-slate-100 placeholder-slate-500 focus:ring-0"
+            data-app-search
+          />
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <button
+          type="button"
+          class="px-4 py-2 rounded-full text-sm font-medium bg-white text-black transition-colors"
+          data-tag-filter="all"
+        >
+          {t.atlasAll}
+        </button>
+        {allTags.map((tag) => (
+          <button
+            type="button"
+            class="px-4 py-2 rounded-full text-sm font-medium bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 transition-colors"
+            data-tag-filter={tag}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+
+      <p class="text-sm text-slate-400" data-app-results>
+        {t.atlasCount(apps.length)}
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto" data-app-grid>
+      {apps.map((app) => (
+        <div
+          key={app.slug}
+          data-app-card
+          data-app-title={String(app.name || '').toLowerCase()}
+          data-app-description={String(app.description || '').toLowerCase()}
+          data-app-tags={(app.tags || []).join('|').toLowerCase()}
+          class="group overflow-hidden rounded-[1.6rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.88),rgba(6,10,24,0.96))] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_22px_60px_rgba(14,165,233,0.14)]"
+        >
+          <div class="relative flex h-40 items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.24),rgba(15,23,42,0.9))] md:h-44">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.16)_0,transparent_16%),radial-gradient(circle_at_80%_30%,rgba(255,255,255,0.12)_0,transparent_12%),radial-gradient(circle_at_50%_75%,rgba(255,255,255,0.08)_0,transparent_16%)]"></div>
+            {app.thumbnailDisplayUrl || app.thumbnailUrl ? (
+              <img
+                src={app.thumbnailDisplayUrl || app.thumbnailUrl}
+                alt={app.name}
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+            ) : (
+              <div class={`absolute inset-0 bg-gradient-to-br ${getFallbackCoverClasses(app.slug)}`}></div>
+            )}
+            {!(app.thumbnailDisplayUrl || app.thumbnailUrl) && (
+              <div class="relative z-10 flex h-full w-full flex-col justify-between p-5 pb-16">
+                <div class="inline-flex w-fit items-center rounded-full border border-white/15 bg-slate-950/45 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.22em] text-cyan-100 backdrop-blur">
+                  {t.atlasDefaultCover}
+                </div>
+                <div class="max-w-[85%] text-xl font-semibold text-white drop-shadow-[0_10px_20px_rgba(0,0,0,0.45)]">
+                  {app.name}
+                </div>
+              </div>
+            )}
+
+            <div class="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-slate-950/55 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur">
+              <span class="text-amber-300">★</span>
+              <span data-star-count-display>{app.stars || 0}</span>
+            </div>
+
+            <button
+              type="button"
+              class="absolute right-3 top-3 z-30 inline-flex items-center justify-center rounded-full border border-white/10 bg-slate-950/55 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur transition-colors hover:bg-slate-900/75"
+              data-share-app-button
+              data-share-title={app.name}
+              data-share-text={buildShareText(app)}
+              aria-label={t.atlasShare}
+              title={t.atlasShare}
+            >
+              {t.atlasShare}
+            </button>
+
+            <div class="absolute inset-0 z-20 flex items-end bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 p-4">
+              <a
+                href={`/apps/${app.slug}`}
+                class="relative z-30 w-full rounded-xl bg-white/10 py-2 text-center text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+              >
+                {t.atlasLearnMore}
+              </a>
+            </div>
+          </div>
+
+          <div class="p-4">
+            <div class="mb-3 flex flex-wrap gap-2">
+              {(app.tags || []).slice(0, 3).map((tag) => (
+                <span class="rounded-full bg-cyan-400/10 px-2.5 py-1 text-[11px] font-medium text-cyan-200">
+                  {tag}
+                </span>
+              ))}
+              {app.featured && (
+                <span class="rounded-full bg-amber-400/12 px-2.5 py-1 text-[11px] font-medium text-amber-200">
+                  {t.atlasFeatured}
+                </span>
+              )}
+            </div>
+
+            <h3 class="mb-2 text-lg font-bold leading-snug text-white transition-colors group-hover:text-cyan-200">{app.name}</h3>
+            <p class="mb-4 text-sm text-slate-300 line-clamp-2">{app.description}</p>
+
+            <div class="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/5 px-3 py-2.5 text-sm text-slate-300">
+              <div class="min-w-0">
+                <div class="text-[10px] uppercase tracking-[0.22em] text-slate-500">{t.atlasAuthor}</div>
+                <div class="truncate text-sm font-medium text-white">{app.authorName || 'Unknown'}</div>
+              </div>
+              <div class="text-right">
+                <div class="text-[10px] uppercase tracking-[0.22em] text-slate-500">{t.atlasStars}</div>
+                <div class="text-sm font-medium text-amber-200" data-star-count-display>{app.stars || 0}</div>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <a
+                href={app.launchUrl}
+                target="_blank"
+                rel="noreferrer"
+                class="flex-1 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-600 px-4 py-2.5 text-sm font-semibold text-slate-950 transition-all duration-300 hover:shadow-[0_16px_40px_rgba(56,189,248,0.3)]"
+              >
+                {t.atlasTryNow}
+              </a>
+              {app.downloadUrl ? (
+                <a
+                  href={app.downloadUrl}
+                  class="flex-1 inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/8 px-4 py-2.5 text-sm font-semibold text-slate-100 transition-colors hover:bg-white/12"
+                >
+                  {t.atlasDownload}
+                </a>
+              ) : app.githubUrl && (
+                <a
+                  href={app.githubUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="flex-1 inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/8 px-4 py-2.5 text-sm font-semibold text-slate-100 transition-colors hover:bg-white/12"
+                >
+                  GitHub
+                </a>
+              )}
+              <button
+                type="button"
+                class={`inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  starredSlugs.includes(app.slug)
+                    ? 'border border-amber-300/20 bg-amber-400/15 text-amber-200'
+                    : 'bg-white/8 text-slate-100 hover:bg-white/12'
+                }`}
+                data-grid-star-button
+                data-app-slug={app.slug}
+                data-authenticated={currentUser ? 'true' : 'false'}
+              >
+                <span data-grid-star-icon>{starredSlugs.includes(app.slug) ? '★' : '☆'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="hidden max-w-3xl mx-auto mt-10 rounded-3xl border border-dashed border-white/10 bg-white/5 px-6 py-10 text-center backdrop-blur" data-app-empty>
+      <p class="text-xl font-semibold text-white mb-2">{t.atlasNoMatches}</p>
+      <p class="text-slate-300">{t.atlasNoMatchesDesc}</p>
+    </div>
+
+    <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row" data-app-pagination>
+      <button
+        type="button"
+        class="inline-flex min-w-[8.5rem] items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+        data-page-prev
+      >
+        {t.atlasPagePrev}
+      </button>
+      <p class="text-sm text-slate-400" data-page-summary>{t.atlasPageSummary(1, Math.max(1, Math.ceil(apps.length / APPS_PER_PAGE)))}</p>
+      <button
+        type="button"
+        class="inline-flex min-w-[8.5rem] items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+        data-page-next
+      >
+        {t.atlasPageNext}
+      </button>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ showingTemplate: t.atlasShowing('__VISIBLE__', '__TOTAL__'), pageSummaryTemplate: t.atlasPageSummary('__PAGE__', '__TOTAL__'), appsPerPage: APPS_PER_PAGE, shareCopied: t.shareCopied, shareFailed: t.shareFailed }}>
+  const searchInput = document.querySelector('[data-app-search]');
+  const resultLabel = document.querySelector('[data-app-results]');
+  const emptyState = document.querySelector('[data-app-empty]');
+  const paginationRoot = document.querySelector('[data-app-pagination]');
+  const prevButton = document.querySelector('[data-page-prev]');
+  const nextButton = document.querySelector('[data-page-next]');
+  const pageSummary = document.querySelector('[data-page-summary]');
+  const filterButtons = Array.from(document.querySelectorAll('[data-tag-filter]'));
+  const appCards = Array.from(document.querySelectorAll('[data-app-card]'));
+  const gridStarButtons = Array.from(document.querySelectorAll('[data-grid-star-button]'));
+  const shareButtons = Array.from(document.querySelectorAll('[data-share-app-button]'));
+
+  async function shareApp(shareText) {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareText);
+        window.alert(shareCopied);
+        return;
+      }
+
+      throw new Error(shareFailed);
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+      window.alert(shareFailed);
+    }
+  }
+
+  if (searchInput && resultLabel && emptyState && appCards.length > 0) {
+    let activeTag = 'all';
+    let currentPage = 1;
+
+    const updateButtons = () => {
+      filterButtons.forEach((button) => {
+        const isActive = button.getAttribute('data-tag-filter') === activeTag;
+        button.classList.toggle('bg-white', isActive);
+        button.classList.toggle('text-black', isActive);
+        button.classList.toggle('bg-white/5', !isActive);
+        button.classList.toggle('text-gray-300', !isActive);
+      });
+    };
+
+    const applyFilters = () => {
+      const query = searchInput.value.trim().toLowerCase();
+      const visibleCards = [];
+
+      appCards.forEach((card) => {
+        const title = card.getAttribute('data-app-title') || '';
+        const description = card.getAttribute('data-app-description') || '';
+        const tags = card.getAttribute('data-app-tags') || '';
+        const tagList = tags.split('|').filter(Boolean);
+
+        const matchesQuery =
+          query === '' ||
+          title.includes(query) ||
+          description.includes(query) ||
+          tags.includes(query);
+
+        const matchesTag = activeTag === 'all' || tagList.includes(activeTag.toLowerCase());
+        const isVisible = matchesQuery && matchesTag;
+
+        if (isVisible) {
+          visibleCards.push(card);
+        }
+      });
+
+      const totalVisible = visibleCards.length;
+      const totalPages = Math.max(1, Math.ceil(totalVisible / appsPerPage));
+      currentPage = Math.min(currentPage, totalPages);
+      const startIndex = (currentPage - 1) * appsPerPage;
+      const endIndex = startIndex + appsPerPage;
+
+      appCards.forEach((card) => card.classList.add('hidden'));
+      visibleCards.slice(startIndex, endIndex).forEach((card) => card.classList.remove('hidden'));
+
+      resultLabel.textContent = showingTemplate
+        .replace('__VISIBLE__', `${totalVisible}`)
+        .replace('__TOTAL__', `${appCards.length}`);
+      emptyState.classList.toggle('hidden', totalVisible !== 0);
+
+      if (paginationRoot && prevButton && nextButton && pageSummary) {
+        paginationRoot.classList.toggle('hidden', totalVisible === 0);
+        prevButton.disabled = currentPage <= 1;
+        nextButton.disabled = currentPage >= totalPages;
+        pageSummary.textContent = pageSummaryTemplate
+          .replace('__PAGE__', `${currentPage}`)
+          .replace('__TOTAL__', `${totalPages}`);
+      }
+    };
+
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        activeTag = button.getAttribute('data-tag-filter') || 'all';
+        currentPage = 1;
+        updateButtons();
+        applyFilters();
+      });
+    });
+
+    searchInput.addEventListener('input', () => {
+      currentPage = 1;
+      applyFilters();
+    });
+
+    prevButton?.addEventListener('click', () => {
+      currentPage = Math.max(1, currentPage - 1);
+      applyFilters();
+      document.getElementById('apps')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    nextButton?.addEventListener('click', () => {
+      currentPage += 1;
+      applyFilters();
+      document.getElementById('apps')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    updateButtons();
+    applyFilters();
+  }
+
+  gridStarButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const slug = button.getAttribute('data-app-slug');
+      const authenticated = button.getAttribute('data-authenticated') === 'true';
+
+      if (!authenticated) {
+        window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+        return;
+      }
+
+      const response = await fetch('/api/update-app', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug, action: 'toggle-star' }),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        return;
+      }
+
+      const starred = Boolean(result.starred);
+      button.className = `inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+        starred
+          ? 'border border-amber-300/20 bg-amber-400/15 text-amber-200'
+          : 'bg-white/8 text-slate-100 hover:bg-white/12'
+      }`;
+
+      const icon = button.querySelector('[data-grid-star-icon]');
+      if (icon) icon.textContent = starred ? '★' : '☆';
+
+      const card = button.closest('[data-app-card]');
+      const countNodes = card?.querySelectorAll('[data-star-count-display]') || [];
+      countNodes.forEach((node) => {
+        node.textContent = `${result.count}`;
+      });
+    });
+  });
+
+  shareButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      await shareApp(button.getAttribute('data-share-text') || window.location.href);
+    });
+  });
+</script>

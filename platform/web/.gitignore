@@ -1,0 +1,10 @@
+.vercel
+node_modules
+dist
+.astro
+runtime
+.DS_Store
+.env
+.env.*
+!.env.example
+!.env.container.example

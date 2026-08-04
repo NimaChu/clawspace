@@ -1,0 +1,50 @@
+---
+import Layout from '../../components/Layout.astro';
+import AppDetails from '../../components/AppDetails.astro';
+import { getUserStarredSlugs } from '../../lib/app-stars.js';
+import { getCurrentUser } from '../../lib/auth.js';
+import { canUserViewApp, getAllApps, getAppBySlug } from '../../lib/app-registry.js';
+import { getTranslations } from '../../lib/i18n.js';
+
+const currentUser = await getCurrentUser(Astro.request);
+const app = await getAppBySlug(Astro.params.slug);
+const starredSlugs = currentUser ? await getUserStarredSlugs(currentUser.id) : [];
+const t = getTranslations(Astro.request);
+
+if (!app || !canUserViewApp(app, currentUser)) {
+  Astro.response.status = 404;
+}
+
+const allApps = await getAllApps();
+const relatedApps = app
+  ? allApps
+      .filter((candidate) => candidate.published !== false)
+      .filter((candidate) => candidate.slug !== app.slug)
+      .filter((candidate) => candidate.tags?.some((tag) => app.tags?.includes(tag)))
+      .slice(0, 3)
+  : [];
+---
+
+{app ? (
+  <Layout title={app.name} description={app.description}>
+    <AppDetails
+      app={app}
+      relatedApps={relatedApps}
+      currentUser={currentUser}
+      isStarred={starredSlugs.includes(app.slug)}
+      locale={t.lang}
+    />
+  </Layout>
+) : (
+  <Layout title={t.appNotFoundTitle} description={t.appNotFoundDesc}>
+    <section class="min-h-screen bg-[#0a0a0a] text-white grid place-items-center">
+      <div class="text-center">
+        <h1 class="text-4xl font-bold mb-4">{t.appNotFoundTitle}</h1>
+        <p class="text-gray-400 mb-6">{t.appNotFoundDesc}</p>
+        <a href="/" class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3 font-semibold hover:bg-blue-700">
+          {t.backToHome}
+        </a>
+      </div>
+    </section>
+  </Layout>
+)}

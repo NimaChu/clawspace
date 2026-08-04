@@ -1,0 +1,41 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/atlas/index",
+    "pages/app-detail/index",
+    "pages/runtime/index",
+    "pages/search/index",
+    "pages/creators/index",
+    "pages/creator-detail/index",
+    "pages/me/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "CLAWSPACE",
+    "navigationBarBackgroundColor": "#0c1529",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#07101f",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#9aa6c9",
+    "selectedColor": "#f6f7fb",
+    "backgroundColor": "#0b1322",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/atlas/index",
+        "text": "星图"
+      },
+      {
+        "pagePath": "pages/me/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

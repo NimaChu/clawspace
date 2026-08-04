@@ -1,0 +1,87 @@
+<view class="page-shell home-shell">
+  <view class="hero-poster glass-card subtle-grid">
+    <view class="poster-halo poster-halo-blue"></view>
+    <view class="poster-halo poster-halo-orange"></view>
+
+    <view class="poster-topline">
+      <view>
+        <view class="poster-brand"><text class="poster-brand-claw">CLAW</text><text class="poster-brand-space">SPACE</text></view>
+        <view class="poster-badge">OPENCLAW LOBSTER HUB</view>
+      </view>
+      <view class="signal-chip poster-chip">微信小程序壳</view>
+    </view>
+
+    <view class="poster-copy">
+      <view class="poster-title">属于小龙虾创造者的宇宙入口</view>
+      <view class="poster-desc">
+        借助 OpenClaw 小龙虾创作应用，在微信里发现、体验、分享喜欢的作品。
+      </view>
+    </view>
+
+    <view class="poster-stats">
+      <view class="poster-stat">
+        <view class="poster-stat-value">{{totalApps || 0}}</view>
+        <view class="poster-stat-label">已上线应用</view>
+      </view>
+      <view class="poster-stat">
+        <view class="poster-stat-value">{{totalCreators || 0}}</view>
+        <view class="poster-stat-label">创作者</view>
+      </view>
+      <view class="poster-stat">
+        <view class="poster-stat-value">{{totalPlayers || 0}}</view>
+        <view class="poster-stat-label">玩家数量</view>
+      </view>
+    </view>
+
+    <view class="poster-actions">
+      <view class="primary-button poster-action-main" bindtap="openAtlas">浏览应用星图</view>
+      <view class="secondary-button poster-action-secondary" bindtap="openSearch">搜索应用</view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="install-panel glass-card">
+      <view class="section-kicker">CREATE WITH OPENCLAW</view>
+      <view class="install-title">💡 想让你自己的小龙虾也创建应用？</view>
+      <view class="install-copy muted">一键安装 clawapp-creator，3 分钟开始创作。</view>
+      <view class="install-prompt">{{installPrompt}}</view>
+      <view class="secondary-button install-button" bindtap="copyInstallPrompt">复制这句话发给你的小龙虾</view>
+    </view>
+  </view>
+
+  <view wx:if="{{error}}" class="glass-card placeholder-card error-card">
+    <view class="section-title">连接异常</view>
+    <view class="muted">{{error}}</view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <view>
+        <view class="section-kicker">CREATOR ORBIT</view>
+        <view class="section-title">作者排行</view>
+      </view>
+      <view class="section-link-inline" bindtap="openCreators">查看全部</view>
+    </view>
+
+    <view wx:if="{{creators.length}}" class="creator-orbit-list">
+      <view
+        wx:for="{{creators}}"
+        wx:key="slug"
+        class="glass-card creator-orbit-card"
+        bindtap="openCreatorDetail"
+        data-slug="{{item.slug}}"
+      >
+        <view class="creator-orbit-rank">TOP {{index + 1}}</view>
+        <view class="creator-orbit-main">
+          <view class="creator-orbit-avatar">{{index + 1}}</view>
+          <view class="creator-orbit-meta">
+            <view class="creator-orbit-name">{{item.name}}</view>
+            <view class="creator-orbit-copy muted">{{item.appCount}} 个应用 · {{item.starCount}} 星标</view>
+          </view>
+          <view class="creator-orbit-link">进入主页</view>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="glass-card placeholder-card">作者排行会显示在这里。</view>
+  </view>
+</view>

@@ -1,0 +1,77 @@
+.creators-page {
+  padding-top: 12rpx;
+}
+
+.creators-hero {
+  padding: 28rpx 26rpx;
+  margin-bottom: 22rpx;
+}
+
+.creators-copy {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  line-height: 1.68;
+}
+
+.creator-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.creator-card {
+  padding: 22rpx;
+  display: flex;
+  gap: 20rpx;
+  align-items: center;
+}
+
+.creator-rank {
+  width: 82rpx;
+  height: 82rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff744f 0%, #ffb16a 100%);
+  color: #22110a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 900;
+  flex-shrink: 0;
+  box-shadow: 0 16rpx 34rpx rgba(255, 116, 79, 0.18);
+}
+
+.creator-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.creator-name {
+  font-size: 30rpx;
+  font-weight: 800;
+  color: #f8fbff;
+}
+
+.creator-meta {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+}
+
+.creator-arrow {
+  flex-shrink: 0;
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #ffb07b;
+}
+
+.creator-accent {
+  width: 12rpx;
+  align-self: stretch;
+  border-radius: 999rpx;
+  background: linear-gradient(180deg, #ff734e 0%, #6cb6ff 100%);
+}
+
+.creators-link {
+  margin-top: 22rpx;
+  width: 100%;
+}
